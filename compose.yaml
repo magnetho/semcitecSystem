@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   db:
     image: mariadb:11.2
@@ -17,6 +16,7 @@ services:
       - semcitec-network
 
   app:
+    build: .
     image: semcitecsystem:1.0.0
     container_name: semcitecSystem
     restart: always
@@ -27,7 +27,7 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       USER: cnb
     ports:
-      - "80:8080"
+      - "82:8080"
     user: root
     volumes:
       - "~/data/app/:/home/cnb/app/"

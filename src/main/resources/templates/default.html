@@ -2,7 +2,6 @@
 <html lang="pt-BR" xmlns:th="http://thymeleaf.org">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,18 +11,22 @@
 
     <title>Semcitec System</title>
 
-    <!-- Custom fonts for this template-->
-    <link href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Font Awesome (CDN) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.css" rel="stylesheet">
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- DataTables CSS (CDN) -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <!-- Estilos customizados locais -->
     <link href="/css/sb-admin-2.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -40,24 +43,21 @@
 
             <!-- Main Content -->
             <main id="content" class="container-fluid">
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-secondary" th:text="${contentTitle}"></h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-download fa-sm text-white-50"></i> 
-                            Relatório
-                        </a>
-                    </div>
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-secondary" th:text="${contentTitle}"></h1>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-download fa-sm text-white-50"></i>
+                        Relatório
+                    </a>
+                </div>
 
-                    <div th:replace="~{${content}}"></div>
+                <div th:replace="~{${content}}"></div>
             </main>
             <!-- End of Main Content -->
 
             <div th:replace="~{partials/footer}"></div>
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 
@@ -85,7 +85,6 @@
             </div>
         </div>
     </div>
-    <!-- End of the Toast Notification -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -94,7 +93,7 @@
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -106,46 +105,47 @@
                 <div class="modal-body">Selecione "Sair" abaixo se estiver pronto para encerrar sua sessão atual</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
-<!--                    <form action="/logout" method="post">-->
-<!--                        <button class="btn btn-primary" type="submit">Logout</button>-->
-<!--                    </form>-->
                     <a class="btn btn-primary" href="/logout">Sair</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <!-- <script src="/js/bootstrap.bundle.min.js"></script> -->
+    <!-- jQuery (CDN) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="/node_modules/chart.js/dist/chart.umd.js"></script>
+    <!-- Chart.js (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script th:src="@{/js/charts/chart-bar-students.js}"></script>
 
-    <script src="/node_modules/datatables.net-bs5/node_modules/datatables.net/js/dataTables.js"></script>
-    <script src="/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
+    <!-- DataTables (CDN) -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+    <!-- Inicialização do DataTables -->
     <script src="/js/datatables-initialise.js"></script>
 
-    <script src="/node_modules/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- TinyMCE (CDN) -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
-    <!-- Custom scripts for all pages-->
+    <!-- Custom scripts -->
     <script src="/js/sb-admin-2.min.js"></script>
     <script src="/js/custom.js"></script>
 
     <script th:inline="javascript">
         var classrooms = /*[[ ${classroomList} ]]*/{};
-        if(classrooms) classroomLoad(); // Chama a função para carregar as turmas inicialmente
+        if (classrooms) classroomLoad();
 
         var chartData = /*[[ ${statistics} ]]*/[];
-        if(chartData) drawChart(chartData);
+        if (chartData) drawChart(chartData);
 
         tinymce.init({
             selector: 'textarea',
             language: 'pt_BR',
-            plugins: ['table', 'emoticons', 'lists', 'fullscreen', 'pagebreak', 'checklist', 'wordcount', 'image', 'media', 'advlist' ,'accordion'],
+            plugins: ['table', 'emoticons', 'lists', 'fullscreen', 'pagebreak', 'checklist', 'wordcount', 'image', 'media', 'advlist', 'accordion'],
             branding: false,
             elementpath: false,
             promotion: false,
@@ -155,4 +155,5 @@
         });
     </script>
 </body>
+
 </html>
