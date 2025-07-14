@@ -1,0 +1,84 @@
+<!-- Begin Page Content -->
+<!-- DataTales Example -->
+<div class="card o-hidden border-0 shadow-lg mb-2">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <!-- Verifica o resultado da operação e exibe a mensagem correspondente -->
+                    <div th:if="${param.success}" class="alert alert-success">
+                        Horário atribuido com sucesso!
+                    </div>
+
+                    <div th:if="${param.fail}" class="alert alert-danger">
+                        Falha ao atribuir horário!
+                    </div>
+
+                    <form th:object="${schedule}" method="post" enctype="multipart/form-data" th:action="@{/schedule/save}">
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">                        
+                           
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="floatingSelectState">Turma</label>
+                                <select class="form-control" id="floatingSelectState" name="classroom" th:field="*{classroom.uuid}" aria-label="Floating label select example" required>
+                                    <option value="">-- Selecione --</option>
+                                    <option th:each="classRoom : ${classList}"
+                                            th:value="${classRoom.uuid}"
+                                            th:text="${classRoom.course.name + ' - ' + classRoom.name } "                                            >
+                                        </option>
+                                </select>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="small mb-1" for="sl-employeelist">Professor</label>
+                                <select class="form-control" id="sl-employeelist" name="user" th:field="*{user.uuid}"  aria-label="Floating label select example" required>
+                                    <option value="">-- Selecione --</option>
+                                    <option th:each="employee : ${employeeList}"
+                                            th:value="${employee.uuid}"
+                                            th:text="${employee.name } "                                            >
+                                        </option>
+                                </select>
+                              </div>
+
+                         </div>                             
+                                           
+               
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                             <div class="col-md-4">
+                            <label class="small mb-1" for="weekDay">Dia</label>
+                            <select class="form-control" id="weekDay" name="dayOfWeek" th:field="*{dayOfWeek}"  aria-label="Floating label select example" required>
+                                <option value="">-- Selecione --</option>
+                                <th:block th:each="day : ${weekDays}">
+                                    <option th:value="${day}" th:text="${day}"></option>
+                                </th:block>
+                            </select>
+                            </div>
+                            
+                            
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="ipt-start">Hora inicial</label>
+                                <input class="form-control" id="ipt-start" th:field="*{startTime}" type="time" name="startTime" placeholder="horario inicial"   required>
+                            </div>
+                          <div class="col-md-4">
+                                <label class="small mb-1" for="ipt-end">Hora término</label>
+                                <input class="form-control" id="ipt-end" th:field="*{endTime}" type="time" name="endTime" placeholder="Horário final" required>
+                           </div>
+                            <input type="hidden" th:field="*{uuid}">
+
+                           
+                        </div>
+
+                        <!-- Save changes button-->
+                        <input type="hidden" th:field="*{uuid}">
+                        <button class="btn btn-primary" type="submit">Salvar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-3 d-none d-lg-block bg-newCourse-image"></div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->

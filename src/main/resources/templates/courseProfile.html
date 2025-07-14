@@ -121,12 +121,17 @@
             <!-- Verifica o resultado da operação e exibe a mensagem correspondente -->
             <form method="post" th:action="@{/course/saveCourse}">
               <input type="hidden" name="uuid" th:value="${course.uuid}">
+              <input type="hidden" name="creationDate" th:value="${course.creationDate}">
               <!-- Form Row-->
               <div class="row gx-3 mb-3">
                 <!-- Form Group (first name)-->
-                <div class="col-md-12">
+                <div class="col-md-9">
                   <label class="small mb-1" for="inputFullName">Nome do curso</label>
                   <input class="form-control" id="inputFullName" type="text" name="name" placeholder="Nome do curso" th:value="${course.name}">
+                </div>
+                <div class="col-md-3">
+                  <label class="small mb-1" for="inputValue">Valor do curso</label>
+                  <input class="form-control" id="inputValue" type="number" name="value"  th:value="${course.value}">
                 </div>
               </div>
               <!-- Form Row-->

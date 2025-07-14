@@ -33,7 +33,7 @@ public class ScheduleService {
         return this.scheduleRepository.save(scheduleData);
     }
     
-    public Schedule saveDescription(Employee scheduleData) {
+    public Schedule saveDescription(Schedule scheduleData) {
         Schedule schedule = this.scheduleRepository.findById(scheduleData.getUuid()).get();
         return this.scheduleRepository.save(schedule);
     }

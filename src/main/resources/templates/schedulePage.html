@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <a href="/employee/newEmployee" class="btn btn-primary h5 mb-0 font-weight-bold">Novo Funcionário</a>
+                        <a href="/schedule/new" class="btn btn-primary h5 mb-0 font-weight-bold">Atribuir Horários</a>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -23,7 +23,7 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total de Funcionários</div>
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total de Atribuições</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(scheduleList)}"></div>
                     </div>
                     <div class="col-auto">
@@ -39,30 +39,32 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Lista de Funcionário</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Horários</h6>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-sm table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                 <thead class="table-light">
                 <tr>
-                    <th>Nome</th>
-                    <th>Cargo</th>
-                    <th>Secretaria</th>
-                    <th>Telefone</th>
-                    <th>Cidade</th>
+                    <th>Curso</th>
+                    <th>Turma</th>
+                    <th>Professor</th>
+                    <th>Dia</th>
+                    <th>inicio</th>
+                    <th>Final</th>
                     <th>Ação</th>
                 </tr>
                 </thead>               
                 <tbody>
-                <tr th:each="employee : ${scheduleList}">
-                    <td th:text="${employee.classroom.name}"></td>
-                    <td th:text="${employee.user.name}"></td>
-                    <td th:text="${employee.dayOfWeek}"></td>
-                    <td th:text="${employee.startTime}"></td>
-                    <td th:text="${employee.endTime}"></td>
+                <tr th:each="schedule : ${scheduleList}">
+                    <td th:text="${schedule.classroom.course.name}"></td>
+                    <td th:text="${schedule.classroom.name}"></td>
+                    <td th:text="${schedule.user.name}"></td>
+                    <td th:text="${schedule.dayOfWeek}"></td>
+                    <td th:text="${schedule.startTime}"></td>
+                    <td th:text="${schedule.endTime}"></td>
                     <td class="d-flex justify-content-center">
-                        <a class="btn btn-outline-primary" th:href="@{/employee/employeeProfile/{uuid} (uuid=${employee.uuid})}"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a class="btn btn-outline-primary" th:href="@{/schedule/edit/{uuid} (uuid=${schedule.uuid})}"><i class="fa-solid fa-pen-to-square"></i></a>
                     </td>
                 </tr>
                 </tbody>

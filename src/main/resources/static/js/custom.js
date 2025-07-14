@@ -102,15 +102,27 @@ var cpfElement = document.querySelector('#inputCpf');
 cpfElement?.addEventListener('input', validarCpfEExibirFeedback);
 
 function classroomLoad() {
-    var selectedCourse = document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].textContent;
+    const courseSelect = document.getElementById('courseSelect');
+    const selectedOption = courseSelect.options[courseSelect.selectedIndex];
 
-    var classroomsByCourse = classrooms[selectedCourse]; //var classrooms está na página default
+    // Pegando o valor do data-valuecourse
+    let courseValue = selectedOption.dataset.valuecourse;
 
-    var classroomsSelect = document.getElementById('classroomSelect');
+    // Setando no input hidden
+    if(!courseValue){
+        courseValue = 0.00
+    }
+    document.getElementById('courseValueInput').value = courseValue;
+    document.getElementById('monthlyValue').value = courseValue;
+
+    // O resto do seu código para carregar as turmas (classrooms)
+    const selectedCourseText = selectedOption.textContent;
+    const classroomsByCourse = classrooms[selectedCourseText];
+    const classroomsSelect = document.getElementById('classroomSelect');
     classroomsSelect.innerHTML = '';
 
-    for (var i = 0; i < classroomsByCourse.length; i++) {
-        var option = document.createElement('option');
+    for (let i = 0; i < classroomsByCourse.length; i++) {
+        const option = document.createElement('option');
         option.value = classroomsByCourse[i].uuid;
         option.text = classroomsByCourse[i].name;
         classroomsSelect.appendChild(option);

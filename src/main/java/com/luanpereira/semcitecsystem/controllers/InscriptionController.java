@@ -56,49 +56,57 @@ public class InscriptionController {
     public String saveInscription(Inscription inscriptionData, RedirectAttributes redirectAttributes) {
         String successMsg = "";
 
+        // Verifica se o aluno já possui inscrição no curso ou ativa
         List<Inscription> inscriptionsOfTheStudent = this.inscriptionService.findByStudent(inscriptionData.getStudent());
 
-        int classroomVacancies = this.classroomService.findById(inscriptionData.getClassroom().getUuid()).getVacancies();
-        long totalInscriptionPerClassroom = this.inscriptionService.findByClassroom(inscriptionData.getClassroom()).stream()
-                .filter(inscription ->
-                    inscription.getStatus() == Status.ATIVO || inscription.getStatus() == Status.PENDENTE
-                ).count();
-
         boolean anyRestriction = inscriptionsOfTheStudent.stream()
-                .anyMatch(inscription -> inscriptionData.getCourse().getName().equals(inscription.getCourse().getName()) ||
-                                inscription.getStatus().equals(Status.ATIVO)
-                );
+            .anyMatch(inscription ->
+                // Comparar por ID ou UUID, mais seguro
+                inscription.getCourse().getUuid().equals(inscriptionData.getCourse().getUuid()) &&
+                inscription.getStatus() == Status.ATIVO
+            );
 
-        if (anyRestriction == true) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Aluno matriculado");
+        if (anyRestriction) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Aluno já matriculado ou com matrícula ativa.");
             return "redirect:/inscription/newInscription/" + inscriptionData.getStudent().getUuid();
         }
 
+        // Verifica capacidade da turma
+        int classroomVacancies = this.classroomService.findById(inscriptionData.getClassroom().getUuid()).getVacancies();
+
+        long totalInscriptionPerClassroom = this.inscriptionService.findByClassroom(inscriptionData.getClassroom()).stream()
+            .filter(inscription -> 
+                inscription.getStatus() == Status.ATIVO || inscription.getStatus() == Status.PENDENTE
+            ).count();
+
+        // Define status da matrícula
         if (totalInscriptionPerClassroom >= classroomVacancies) {
-            successMsg = "Aluno cadastrado como Reserva. \nA turma atingiu a capacidade máxima de vagas disponíveis";
             inscriptionData.setStatus(Status.RESERVA);
+            successMsg = "Aluno cadastrado como Reserva. A turma atingiu a capacidade máxima de vagas disponíveis.";
         } else {
-            successMsg = "Matrícula realizada com sucesso";
             inscriptionData.setStatus(Status.ATIVO);
+            successMsg = "Matrícula realizada com sucesso.";
         }
 
-
+        // Gera código de inscrição antes de salvar
         try {
-            inscriptionData.setInscriptionCode("0");
+           inscriptionData.setInscriptionCode("0");
             this.inscriptionService.save(inscriptionData);
             redirectAttributes.addFlashAttribute("successMsg", successMsg);
-
             String inscriptionCode = String.format("%04d%02d%06d",
                     inscriptionData.getInscriptionDate().getYear(),
                     inscriptionData.getInscriptionDate().getMonthValue(),
                     this.inscriptionService.getNextValFromSequence());
-
+        
             inscriptionData.setInscriptionCode(inscriptionCode);
             this.inscriptionService.save(inscriptionData);
+        
+            redirectAttributes.addFlashAttribute("successMsg", successMsg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMsg", "Erro ao realizar a matrícula");
         }
-        //return "redirect:/inscription/newInscription/" + inscriptionData.getStudent().getUuid();
+
+        // Redireciona para o perfil do aluno
         return "redirect:/student/studentProfile/" + inscriptionData.getStudent().getUuid();
     }
 }

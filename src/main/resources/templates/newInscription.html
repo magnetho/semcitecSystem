@@ -12,27 +12,66 @@
                         <input type="hidden" name="author" th:value="${user.uuid}">
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (first name)-->
-                            <div class="col-md-12">
+                            <div class="col-md-9">
                                 <label class="small mb-1" for="inputFullName">Nome do aluno</label>
                                 <input class="form-control" id="inputFullName" type="text" th:value="${student.name}" readonly>
                                 <input type="hidden" name="student" th:value="${student.uuid}">
                             </div>
+                            <div class="col-md-3">
+                                <label class="small mb-1" for="ipt-dueDay">Dia Vencimento</label>
+                                <input name="dueDay" class="form-control" id="ipt-dueDay" type="number" min="1" max="31" th:value="${dueDay}"  required>
+                               
+                            </div>
+
                         </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label class="small mb-1" for="courseSelect">Slecione um curso</label>
-                                <select class="form-control" name="course" id="courseSelect" onchange="classroomLoad()">
-                                    <option th:each="course : ${courseList}" th:value="${course.uuid}" th:text="${course.name}"></option>
+                                <label class="small mb-1" for="courseSelect">Selecione um curso</label>
+                                <select class="form-control" name="course" id="courseSelect" onchange="classroomLoad()" required>
+                                     <option value="">-- Selecione --</option>
+                                    <option th:each="course : ${courseList}" th:value="${course.uuid}" th:text="${course.name}"  th:attr="data-valuecourse=${course.value}"></option>></option>
                                 </select>
                             </div>
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label class="small mb-1" for="classroomSelect">Slecione uma turma</label>
-                                <select class="form-control" name="classroom" id="classroomSelect">
+                                <label class="small mb-1" for="classroomSelect">Selecione uma turma</label>
+                                <select class="form-control" name="classroom" id="classroomSelect" required>
+                                    <option value="">-- Selecione --</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="ipt-course-value">Valor Curso</label>
+                                <input class="form-control" id="courseValueInput" type="number"  readonly>
+                            </div>
+                            <!-- Form Group -->
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="ipt-discount">Desconto</label>
+                                <input name="discountValue" class="form-control" id="ipt-discount" type="text" th:value="${discountValue}">
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="monthlyValue">Valor Matricula</label>
+                                <input name="monthlyValue" class="form-control" id="monthlyValue" type="text" th:value="${monthlyValue}" required>
+                            </div>
+                           
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="ipt-course-value">Observação</label>
+                                <textarea rows="3" name="observation" class="form-control" id="observation"   ></textarea>
+                            </div>
+                            <!-- Form Group -->
+                            
+                           
                         </div>
 
                         <!-- Save changes button-->

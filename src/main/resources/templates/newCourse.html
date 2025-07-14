@@ -19,10 +19,15 @@
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (first name)-->
-                            <div class="col-md-12">
+                            <div class="col-md-9">
                                 <label class="small mb-1" for="inputFullName">Nome do curso</label>
-                                <input class="form-control" id="inputFullName" type="text" name="name" placeholder="Nome do curso" >
+                                <input class="form-control" id="inputFullName" type="text" name="name" placeholder="Nome do curso" required >
                             </div>
+                            <div class="col-md-3">
+                                <label class="small mb-1" for="inputValue">Valor do Curso</label>
+                                <input class="form-control money-input" id="inputValue" type="number" name="value" step="0.01" min="0" required>
+                            </div>
+
                         </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
@@ -45,7 +50,7 @@
 
                         <!-- Save changes button-->
                         <input type="hidden" name="uuid" >
-                        <button class="btn btn-primary" type="submit">Cadastrar</button>
+                        <button class="btn btn-primary" type="submit">Salvar</button>
                     </form>
                 </div>
             </div>

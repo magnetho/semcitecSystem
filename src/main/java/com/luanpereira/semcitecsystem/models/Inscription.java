@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -37,4 +38,9 @@ public class Inscription {
     private Status status;
     @CreationTimestamp
     private LocalDate inscriptionDate;
+    private BigDecimal monthlyValue; 
+    private BigDecimal discountValue; 
+    private Integer dueDay;
+    @Column(columnDefinition = "TEXT")
+    public String observation;
 }

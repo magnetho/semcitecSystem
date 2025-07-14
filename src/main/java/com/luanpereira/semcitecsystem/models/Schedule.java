@@ -17,17 +17,23 @@ import java.util.UUID;
 public class Schedule {
     @Id
     @GeneratedValue
-    private UUID uuid;
+     private UUID uuid;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Classroom classroom;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private UserModel user;
 
     @Enumerated(EnumType.ORDINAL)
-    private DayOfWeek dayOfWeek; // Enum do Java
+    @Column(nullable = false)
+    private DayOfWeek dayOfWeek;
 
+    @Column(nullable = false)
     private LocalTime startTime;
+
+    @Column(nullable = false)
     private LocalTime endTime;   
 }

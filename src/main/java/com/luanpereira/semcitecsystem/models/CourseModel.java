@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -22,10 +23,12 @@ public class CourseModel {
     public UUID uuid;
     @Column(unique = true)
     public String name;
+    @Column(unique = true)
     public String entity;
     public String workload;
     @Column(columnDefinition = "TEXT")
     public String description;
+    public BigDecimal value;
     @CreationTimestamp
     public LocalDate creationDate;
 }

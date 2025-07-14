@@ -1,0 +1,63 @@
+<!-- Begin Page Content -->
+<!-- DataTales Example -->
+<div class="card o-hidden border-0 shadow-lg mb-2">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <!-- Verifica o resultado da operação e exibe a mensagem correspondente -->
+                    <div th:if="${param.success}" class="alert alert-success">
+                         Periodo criado com sucesso!
+                    </div>
+
+                    <div th:if="${param.fail}" class="alert alert-danger">
+                        Falha ao criar Período!
+                    </div>
+
+                    <form  method="post" enctype="multipart/form-data" th:action="@{/finance/period/create}">
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3"> 
+                                               
+                           
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="slt-month">Mês</label>
+                                <select class="form-control" id="slt-month" name="month"  aria-label="Floating label select " required>
+                                    <option value="">-- Selecione --</option>
+                                    <option value="1" >Jan</option> 
+                                    <option value="2">Fev</option>     
+                                    <option value="3">Mar</option>
+                                    <option value="5">Abr</option>    
+                                    <option value="5">Mai</option>     
+                                    <option value="6">Jun</option>     
+                                    <option value="7">Jul</option>     
+                                    <option value="8">Ago</option>     
+                                    <option value="9">Set</option>     
+                                    <option value="10">Out</option>     
+                                    <option value="11">Nov</option>
+                                    <option value="12">Dez</option>           
+                                        
+                                </select>
+                              </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="ipt-year">Ano</label>
+                                <input class="form-control" id="ipt-year" name="year" type="number"  required>
+                           </div>                          
+                            
+
+                         </div>                             
+                                         
+               
+                 
+                      
+
+                        <!-- Save changes button-->
+                        <button class="btn btn-primary" type="submit">Salvar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-3 d-none d-lg-block bg-newCourse-image"></div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
