@@ -1,0 +1,43 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Horários</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Aluno</th>
+                        <th>Tipo</th>
+                        <th>Vencimento</th>
+                        <th>Valor Base</th>
+                        <th>Desconto</th>
+                        <th>Acréscimo</th>
+                        <th>Pago</th>
+                        <th>Valor Final</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="bill, stat : ${bills}">
+                        <td th:text="${bill.studentName}"></td>
+                        <td th:text="${bill.type}"></td>
+                        <td th:text="${#temporals.format(bill.dueDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${#numbers.formatDecimal(bill.baseAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(bill.discountAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(bill.additionAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(bill.paymentValue, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(bill.finalAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="table-dark">
+                        <td colspan="7"><strong>Total Geral</strong></td>
+                        <td th:text="${#numbers.formatDecimal(totalFinal, 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->

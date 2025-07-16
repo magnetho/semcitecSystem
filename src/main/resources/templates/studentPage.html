@@ -45,25 +45,34 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>email</th>
-                    <th>Telefone 1</th>
-                    <th>Cidade</th>
-                    <th>Ação</th>
-                </tr>
-                </thead>              
+                    <tr>
+                        <th>Nome</th>
+                        <th>email</th>
+                        <th>Telefone 1</th>
+                        <th>Cidade</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr th:each="student : ${studentList}">
-                    <td th:text="${student.name}">Tiger Nixon</td>
-                    <td th:text="${student.email}">Tiger Nixon</td>
-                    <td th:text="${student.phone1}">Tiger Nixon</td>
-                    <td th:text="${student.city}">Tiger Nixon</td>
-                    <td class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-outline-primary" th:href="@{/student/studentProfile/{uuid} (uuid=${student.uuid})}" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Perfil do aluno"><i class="fa-solid fa-address-card"></i></a>
-                        <a class="btn btn-outline-success" th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}" data-bs-toggle="tooltip" data-bs-title="Matricular aluno"><i class="fa-solid fa-pen-to-square"></i></a>
-                    </td>
-                </tr>
+                    <tr th:each="student : ${studentList}">
+                        <td th:text="${student.name}">Tiger Nixon</td>
+                        <td th:text="${student.email}">Tiger Nixon</td>
+                        <td th:text="${student.phone1}">Tiger Nixon</td>
+                        <td th:text="${student.city}">Tiger Nixon</td>
+                        <td class="d-flex justify-content-center gap-2">
+                            <a class="btn btn-outline-primary"
+                                th:href="@{/student/studentProfile/{uuid} (uuid=${student.uuid})}"
+                                data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Perfil do aluno"><i
+                                    class="fa-solid fa-address-card"></i></a>
+                            <a class="btn btn-outline-success"
+                                th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"
+                                data-bs-toggle="tooltip" data-bs-title="Matricular aluno"><i
+                                    class="fa-solid fa-pen-to-square"></i></a>
+                            <a class="btn btn-outline-success"
+                                th:href="@{/finance/student/{uuid} (uuid=${student.uuid})}" data-bs-toggle="tooltip"
+                                data-bs-title="Financeiro"><i class="fa-solid fa-dollar-sign"></i></a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

@@ -7,7 +7,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <a href="/finance/period/new" class="btn btn-primary h5 mb-0 font-weight-bold">Abrir Períodos</a>
+                        <a href="/finance/period/new" class="btn btn-primary h5 mb-0 font-weight-bold">Abrir
+                            Períodos</a>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
@@ -45,23 +46,25 @@
         <div class="table-responsive">
             <table class="table table-sm table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                 <thead class="table-light">
-                <tr>
-                     <th>#</th>
-                    <th>Descrição</th>
-                    <th>Status</th>
-                    <th>Ação</th>
-                </tr>
-                </thead>               
+                    <tr>
+                        <th>#</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr th:each="period, i: ${periodList}">
-                    <th th:text="${i.index + 1}"></th>
-                    <td th:text="${period.getDisplayName()}"></td>
-                    <td th:text="${period.status}"></td>
-        
-                    <td class="d-flex justify-content-center">
-                        <a class="btn btn-outline-primary" th:href="@{/finance/generate/{uuid} (uuid=${period.uuid})}"><i class="fa-solid fa-pen-to-square"></i></a>
-                    </td>
-                </tr>
+                    <tr th:each="period, i: ${periodList}">
+                        <th th:text="${i.index + 1}"></th>
+                        <td th:text="${period.getDisplayName()}"></td>
+                        <td th:text="${period.status}"></td>
+
+                        <td class="d-flex justify-content-center">
+                            <a class="btn btn-outline-primary"
+                                th:href="@{/finance/generate/{uuid} (uuid=${period.uuid})}"><i
+                                    class="fa-solid fa-gear"></i></a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

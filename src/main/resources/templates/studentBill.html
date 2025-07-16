@@ -51,7 +51,7 @@
 
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-            <form th:action="@{/student/{uuid}(uuid=${student.uuid})}" method="get">
+            <form th:action="@{/finance/student/{uuid}(uuid=${student.uuid})}" method="get">
                 <div class="form-group d-flex align-items-center gap-2">
                     <label for="periodSelect" class="form-label m-0">Período:</label>
                     <select id="periodSelect" name="period" class="form-select" onchange="this.form.submit()">
@@ -86,8 +86,8 @@
                     <tbody>
                         <tr th:each="bill, stat : ${studentBills}">
                             <td>
-                                <input type="checkbox" name="selectedBills" th:value="${bill.uuid}"
-                                    th:disabled="${bill.finalAmount <=0}" />
+                                <input type="checkbox" name="bills" th:value="${bill.uuid}"
+                                    th:data-amount="${bill.finalAmount}" th:disabled="${bill.finalAmount <=0}" />
                             </td>
                             <td th:text="${#temporals.format(bill.updatedAt, 'dd/MM/yyyy')}">1</td>
                             <td
@@ -125,17 +125,21 @@
                             </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                    data-bs-target="#billModal" th:attr="data-uuid=${bill.uuid},
+                                    data-bs-target="#billModal" th:attr="
+                                                                    data-uuid=${bill.uuid},
                                                                     data-due-date=${bill.dueDate},
                                                                     data-base-amount=${bill.baseAmount},
-                                                                    data-period=${bill.period.uuid},
+                                                                    data-discount-amount=${bill.discountAmount},
+                                                                    data-addition-amount=${bill.additionAmount},
+                                                                    data-payment-value=${bill.paymentValue},
+                                                                    data-payment-date=${bill.paymentDate},
+                                                                    data-payment-type=${bill.paymentType},
                                                                     data-type=${bill.type},
-                                                                    data-observation=${bill.observation}"
+                                                                    data-observation=${bill.observation},
+                                                                    data-inscription=${bill.inscription?.uuid}"
                                     onclick="openEditModal(this)">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                <a th:if="${bill.finalAmount > 0}" th:href="@{'/student-bill/pay/' + ${bill.uuid}}"
-                                    class="btn btn-sm btn-outline-success">💲</a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(studentBills)}">
@@ -147,7 +151,7 @@
 
             <div class="d-flex justify-content-between mt-3">
                 <div>
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-success" onclick="preparePaymentModal()" data-bs-toggle="modal"
                         data-bs-target="#confirmPaymentModal">
                         💰 Pagar Selecionados
                     </button>
@@ -218,48 +222,84 @@
 </div>
 
 <div class="modal fade" id="billModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form th:action="@{/finance/student-bill}" method="post">
+            <form th:action="@{/finance/student-bill/edit}" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Bill</h5>
+                    <h5 class="modal-title">Editar Boleto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
                     <input type="hidden" name="uuid" id="billUuid" />
+                    <input type="hidden" name="period" th:value="${periodSelect.uuid}" />
+                    <input type="hidden" name="student" th:value="${student.uuid}" />
+                    <input type="hidden" name="inscription" id="inscription" />
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label>Tipo de Boleto</label>
+                            <select name="type" class="form-select" id="billType">
+                                <option th:each="type : ${T(com.luanpereira.semcitecsystem.models.BillType).values()}"
+                                    th:value="${type}" th:text="${type}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Vencimento</label>
+                            <input type="date" name="dueDate" class="form-control" id="dueDate" />
+                        </div>
 
-                    <div class="mb-2">
-                        <label>Due Date</label>
-                        <input type="date" name="dueDate" class="form-control" id="dueDate" />
-                    </div>
+                        <div class="col-md-4">
+                            <label>Valor Base</label>
+                            <input type="number" name="baseAmount" class="form-control" id="baseAmount" />
+                        </div>
 
-                    <div class="mb-2">
-                        <label>Base Amount</label>
-                        <input type="number" name="baseAmount" class="form-control" id="baseAmount" />
-                    </div>
+                        <div class="col-md-4">
+                            <label>Desconto</label>
+                            <input type="number" name="discountAmount" class="form-control" id="discountAmount" />
+                        </div>
 
-                    <div class="mb-2">
-                        <label>Type</label>
-                        <select name="type" class="form-select" id="billType">
-                            <option th:each="type : ${T(com.luanpereira.semcitecsystem.models.BillType).values()}"
-                                th:value="${type}" th:text="${type}">
-                            </option>
-                        </select>
-                    </div>
+                        <div class="col-md-4">
+                            <label>Acréscimo</label>
+                            <input type="number" name="additionAmount" class="form-control" id="additionAmount" />
+                        </div>
 
-                    <div class="mb-2">
-                        <label>Observation</label>
-                        <textarea name="observation" rows="3" class="form-control" id="observation"></textarea>
+                        <div class="col-md-4">
+                            <label>Valor Pago</label>
+                            <input type="number" name="paymentValue" class="form-control" id="paymentValue" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Data de Pagamento</label>
+                            <input type="date" name="paymentDate" class="form-control" id="paymentDate" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Tipo de Pagamento</label>
+                            <select name="paymentType" class="form-select" id="paymentType">
+                                <option value="" selected>Selecione</option>
+                                <option th:each="pt : ${T(com.luanpereira.semcitecsystem.models.PaymentType).values()}"
+                                    th:value="${pt}" th:text="${pt}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>Observação</label>
+                            <textarea name="observation" rows="3" class="form-control" id="observation"></textarea>
+                        </div>
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -281,34 +321,89 @@
     </div>
 </div>
 
-<div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmPaymentModalLabel">Confirmar Pagamento</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        Tem certeza que deseja confirmar o pagamento dos lançamentos selecionados?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        
-        <!-- Este botão envia o formulário -->
-        <button type="button" class="btn btn-success" onclick="submitPaymentForm()">Confirmar</button>
-      </div>
+<div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="modalPaymentForm" th:action="@{/finance/pay}" method="post">
+
+                <input type="hidden" name="studentUuid" th:value="${student.uuid}" />
+                <input type="hidden" name="period" th:value="${periodSelect.uuid}" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Pagamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <p><strong>Total selecionado:</strong> <span id="selectedTotal">R$ 0,00</span></p>
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <label for="paymentDate" class="form-label">Data do Pagamento</label>
+                        <input type="date" name="paymentDate" id="paymentDate" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" name="paymentType" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option th:each="t : ${T(com.luanpereira.semcitecsystem.models.PaymentType).values()}"
+                                th:value="${t}" th:text="${t}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Aqui os inputs hidden com os bills selecionados serão inseridos via JS -->
+                    <div id="selectedBillsContainer"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Confirmar</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 
+
 <script>
-    function submitPaymentForm() {
-        document.getElementById('paymentForm').submit();
+    function preparePaymentModal() {
+        const checkboxes = document.querySelectorAll('input[name="bills"]:checked');
+        let total = 0;
+        const container = document.getElementById('selectedBillsContainer');
+        container.innerHTML = ''; // Limpa os anteriores
+
+        checkboxes.forEach(cb => {
+            const amount = parseFloat(cb.getAttribute('data-amount') || 0);
+            if (!isNaN(amount)) total += amount;
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'selectedBills';
+            hiddenInput.value = cb.value;
+            container.appendChild(hiddenInput);
+        });
+
+        // Atualiza o total no modal
+        document.getElementById('selectedTotal').textContent = total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+
+        // Validação: se nenhum checkbox for marcado, não abre o modal
+        if (checkboxes.length === 0) {
+            alert("Selecione pelo menos um lançamento.");
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmPaymentModal'));
+            modal?.hide();
+        }
     }
 </script>
+
 <script>
     function toggleAll(source) {
-        const checkboxes = document.querySelectorAll('input[name="selectedBills"]');
+        const checkboxes = document.querySelectorAll('input[name="bills"]');
         checkboxes.forEach(cb => {
             if (!cb.disabled) {
                 cb.checked = source.checked;
@@ -318,17 +413,17 @@
 </script>
 <script>
     function openEditModal(button) {
-        const uuid = button.getAttribute('data-uuid');
-        const dueDate = button.getAttribute('data-due-date');
-        const baseAmount = button.getAttribute('data-base-amount');
-        const type = button.getAttribute('data-type');
-        const observation = button.getAttribute('data-observation');
-
-        document.getElementById('billUuid').value = uuid;
-        document.getElementById('dueDate').value = dueDate;
-        document.getElementById('baseAmount').value = baseAmount;
-        document.getElementById('billType').value = type;
-        document.getElementById('observation').value = observation;
+        document.getElementById('billUuid').value = button.getAttribute('data-uuid');
+        document.getElementById('dueDate').value = button.getAttribute('data-due-date');
+        document.getElementById('baseAmount').value = button.getAttribute('data-base-amount');
+        document.getElementById('discountAmount').value = button.getAttribute('data-discount-amount');
+        document.getElementById('additionAmount').value = button.getAttribute('data-addition-amount');
+        document.getElementById('paymentValue').value = button.getAttribute('data-payment-value');
+        document.getElementById('paymentDate').value = button.getAttribute('data-payment-date');
+        document.getElementById('paymentType').value = button.getAttribute('data-payment-type');
+        document.getElementById('billType').value = button.getAttribute('data-type');
+        document.getElementById('observation').value = button.getAttribute('data-observation');
+        document.getElementById('inscription').value = button.getAttribute('data-inscription');
     }
 </script>
 

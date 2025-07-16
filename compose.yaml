@@ -11,7 +11,7 @@ services:
     ports: 
       - "3306:3306"
     volumes:
-      - "~/data/db/mysql:/var/lib/mysql"
+      - "~/data/db/mysql1:/var/lib/mysql"
     networks:
       - semcitec-network
 
@@ -27,7 +27,7 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       USER: cnb
     ports:
-      - "82:8080"
+      - "80:8080"
     user: root
     volumes:
       - "~/data/app/:/home/cnb/app/"

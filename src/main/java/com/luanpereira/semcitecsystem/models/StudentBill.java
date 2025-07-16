@@ -75,4 +75,17 @@ public class StudentBill {
                 .subtract(paymentValue);
     }
 
+    public void setPaymentBalance() {
+        setPaymentValue(baseAmount
+                .subtract(discountAmount)
+                .add(additionAmount));
+    }
+
+    public void setCurrentBalance() {
+        setFinalAmount(baseAmount
+                .subtract(discountAmount)
+                .add(additionAmount)
+                .subtract(paymentValue));
+    }
+
 }

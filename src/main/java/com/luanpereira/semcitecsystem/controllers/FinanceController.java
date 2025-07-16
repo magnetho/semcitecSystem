@@ -1,6 +1,8 @@
 package com.luanpereira.semcitecsystem.controllers;
 
+import com.luanpereira.semcitecsystem.Dtos.StudentBillReportDTO;
 import com.luanpereira.semcitecsystem.models.BillType;
+import com.luanpereira.semcitecsystem.models.PaymentType;
 import com.luanpereira.semcitecsystem.models.Period;
 import com.luanpereira.semcitecsystem.models.Schedule;
 import com.luanpereira.semcitecsystem.models.StatusPeriod;
@@ -14,6 +16,7 @@ import com.luanpereira.semcitecsystem.services.StudentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -49,17 +52,27 @@ public class FinanceController {
     }
 
     @GetMapping("/student/{uuid}")
-    public String studentBill(@PathVariable UUID uuid, Model model) {
+    public String studentBill(@PathVariable UUID uuid, Model model,
+            @RequestParam(name = "period", required = false) UUID periodUuid) {
         StudentModel student = this.studentService.findById(uuid);
         List<Period> periods = periodService.findAllOrder();
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
         int currentYear = now.getYear();
 
-        Period selectedPeriod = periods.stream()
-                .filter(p -> p.getMonth() == currentMonth && p.getYear() == currentYear)
-                .findFirst()
-                .orElse(periods.isEmpty() ? null : periods.get(0));
+        Period selectedPeriod;
+
+        if (periodUuid != null) {
+            selectedPeriod = periods.stream()
+                    .filter(p -> p.getUuid().equals(periodUuid))
+                    .findFirst()
+                    .orElse(null);
+        } else {
+            selectedPeriod = periods.stream()
+                    .filter(p -> p.getMonth() == currentMonth && p.getYear() == currentYear)
+                    .findFirst()
+                    .orElse(periods.isEmpty() ? null : periods.get(0));
+        }
 
         List<StudentBill> studentBills = studentBillService.GetByStudentAndPeriod(uuid, selectedPeriod.getUuid());
 
@@ -80,19 +93,82 @@ public class FinanceController {
     @PostMapping("/student-bill")
     public String SaveStudentBill(RedirectAttributes redirectAttributes, @ModelAttribute StudentBill bill) {
 
-        bill.setDiscountAmount(BigDecimal.ZERO);
-        bill.setAdditionAmount(BigDecimal.ZERO);
+        switch (bill.getType()) {
+            case DESCONTO:
+                bill.setDiscountAmount(bill.getBaseAmount());
+                bill.setAdditionAmount(BigDecimal.ZERO);
+                bill.setPaymentValue(BigDecimal.ZERO);
+                bill.setBaseAmount(BigDecimal.ZERO);
+                break;
+            case MATRÍCULA:
+            case TAXA_MATERIAL:
+            case MENSALIDADE:
+                bill.setBaseAmount(bill.getBaseAmount());
+                bill.setAdditionAmount(BigDecimal.ZERO);
+                bill.setPaymentValue(BigDecimal.ZERO);
+                bill.setDiscountAmount(BigDecimal.ZERO);
+                break;
 
-        // Se o tipo for desconto ou estorno, torna o valor negativo
-        if (bill.getType() == BillType.DESCONTO || bill.getType() == BillType.PAGAMENTO
-                || bill.getType() == BillType.ESTORNO) {
-            bill.setBaseAmount(bill.getBaseAmount().negate());
+            case PAGAMENTO:
+
+                bill.setPaymentValue(bill.getBaseAmount());
+                bill.setAdditionAmount(BigDecimal.ZERO);
+                bill.setDiscountAmount(BigDecimal.ZERO);
+                bill.setBaseAmount(BigDecimal.ZERO);
+                break;
+            default:
+                bill.setBaseAmount(bill.getBaseAmount());
+                bill.setAdditionAmount(BigDecimal.ZERO);
+                bill.setPaymentValue(BigDecimal.ZERO);
+                bill.setDiscountAmount(BigDecimal.ZERO);
+                break;
         }
-        bill.setFinalAmount(bill.getBaseAmount());
+
+        bill.setCurrentBalance();
         studentBillService.Save(bill);
         redirectAttributes.addFlashAttribute("successMsg", "Lançamento criado com sucesso!");
-        return "redirect:/finance/student/" + bill.getStudent().getUuid();
+        return "redirect:/finance/student/" + bill.getStudent().getUuid() + "?period=" + bill.getPeriod().getUuid();
 
+    }
+
+    @PostMapping("/student-bill/edit")
+    public String EditStudentBill(RedirectAttributes redirectAttributes, @ModelAttribute StudentBill bill) {
+
+        bill.setCurrentBalance();
+        studentBillService.Save(bill);
+        redirectAttributes.addFlashAttribute("successMsg", "Lançamento criado com sucesso!");
+        return "redirect:/finance/student/" + bill.getStudent().getUuid() + "?period=" + bill.getPeriod().getUuid();
+
+    }
+
+    @PostMapping("/pay")
+    public String paymentBill(RedirectAttributes redirectAttributes,
+            @RequestParam("selectedBills") List<UUID> selectedBills,
+            @RequestParam("paymentDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
+            @RequestParam("paymentType") PaymentType paymentType,
+            @RequestParam("studentUuid") UUID studentUuid,
+            @RequestParam("period") UUID periodUuid,
+            Model model) {
+
+        if (selectedBills.isEmpty()) {
+            model.addAttribute("error", "Nenhum lançamento foi selecionado.");
+            return "redirect:/finance/student/" + studentUuid + "?period=" + periodUuid;
+        }
+
+        for (UUID billId : selectedBills) {
+            StudentBill bill = studentBillService.FindById(billId)
+                    .orElseThrow(() -> new RuntimeException("Lançamento não encontrado: " + billId));
+
+            bill.setPaymentDate(paymentDate);
+            bill.setPaymentType(paymentType);
+            bill.setPaymentBalance();
+            bill.setCurrentBalance();
+
+            studentBillService.Save(bill);
+        }
+
+        redirectAttributes.addFlashAttribute("successMsg", "Lançamento criado com sucesso!");
+        return "redirect:/finance/student/" + studentUuid + "?period=" + periodUuid;
     }
 
     @GetMapping("/period/list")
@@ -152,4 +228,39 @@ public class FinanceController {
         return "redirect:/schedule/new";
     }
 
+    @GetMapping("/report/bills")
+    public String getStudentBillReport(@RequestParam(name = "period", required = false) UUID periodUuid, Model model) {
+
+        List<Period> periods = periodService.findAllOrder();
+        LocalDate now = LocalDate.now();
+        int currentMonth = now.getMonthValue();
+        int currentYear = now.getYear();
+        Period selectedPeriod;
+
+        if (periodUuid != null) {
+            selectedPeriod = periods.stream()
+                    .filter(p -> p.getUuid().equals(periodUuid))
+                    .findFirst()
+                    .orElse(null);
+        } else {
+            selectedPeriod = periods.stream()
+                    .filter(p -> p.getMonth() == currentMonth && p.getYear() == currentYear)
+                    .findFirst()
+                    .orElse(periods.isEmpty() ? null : periods.get(0));
+        }
+
+        var reportList = studentBillService.getStudentBillsByPeriod(selectedPeriod.getUuid());
+
+        // Total geral (finalAmount)
+        BigDecimal totalFinal = reportList.stream()
+                .map(StudentBillReportDTO::finalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("periodSelect", selectedPeriod);
+        model.addAttribute("bills", reportList);
+        model.addAttribute("totalFinal", totalFinal);
+        model.addAttribute("contentTitle", "Relatorio");
+        model.addAttribute("content", "studentBillReport");
+        return "default";
+    }
 }

@@ -3,12 +3,10 @@ package com.luanpereira.semcitecsystem.controllers;
 import com.luanpereira.semcitecsystem.models.Employee;
 import com.luanpereira.semcitecsystem.services.EmployeeService;
 import com.luanpereira.semcitecsystem.utils.BrazilianStates;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +69,8 @@ public class EmployeeController {
 
     @PostMapping("/saveEmployee")
     public String saveNewEmployee(RedirectAttributes redirectAttributes, Model model, Employee employeeData) {
-        String successMsg = employeeData.getUuid() == null ? "Funcionário criado com sucesso" : "Funcionário editado com sucesso";
+        String successMsg = employeeData.getUuid() == null ? "Funcionário criado com sucesso"
+                : "Funcionário editado com sucesso";
 
         try {
             this.employeeService.save(employeeData);
@@ -93,7 +92,8 @@ public class EmployeeController {
             employeeModel.setImg(filePath);
             this.employeeService.save(employeeModel);
             try {
-                Files.copy(img.getInputStream(), Path.of(USER_PROFILE_IMG_DIRECTORY + img.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(img.getInputStream(), Path.of(USER_PROFILE_IMG_DIRECTORY + img.getOriginalFilename()),
+                        StandardCopyOption.REPLACE_EXISTING);
                 System.out.println(USER_PROFILE_IMG_DIRECTORY + img.getOriginalFilename());
             } catch (IOException e) {
                 throw new RuntimeException(e);
