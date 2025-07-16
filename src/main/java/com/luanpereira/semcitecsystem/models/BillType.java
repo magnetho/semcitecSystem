@@ -2,11 +2,11 @@ package com.luanpereira.semcitecsystem.models;
 
 public enum BillType {
 
-    MENSALIDADE ,
+    MENSALIDADE,
     MATRÍCULA,
     TAXA_MATERIAL,
     PAGAMENTO,
     DESCONTO,
-    OUTROS
+    ESTORNO
 
 }

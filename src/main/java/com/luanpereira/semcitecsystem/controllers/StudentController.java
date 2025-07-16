@@ -1,9 +1,13 @@
 package com.luanpereira.semcitecsystem.controllers;
 
 import com.luanpereira.semcitecsystem.models.Inscription;
+import com.luanpereira.semcitecsystem.models.Period;
+import com.luanpereira.semcitecsystem.models.StudentBill;
 import com.luanpereira.semcitecsystem.models.StudentModel;
 import com.luanpereira.semcitecsystem.repositories.StudentRepository;
 import com.luanpereira.semcitecsystem.services.InscriptionService;
+import com.luanpereira.semcitecsystem.services.PeriodService;
+import com.luanpereira.semcitecsystem.services.StudentBillService;
 import com.luanpereira.semcitecsystem.services.StudentService;
 import com.luanpereira.semcitecsystem.utils.BrazilianStates;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -28,6 +34,12 @@ public class StudentController {
     private StudentService studentService;
     @Autowired
     private InscriptionService inscriptionService;
+
+    @Autowired
+    private StudentBillService studentBillService;
+
+    @Autowired
+    private PeriodService periodService;
 
     private List<Map.Entry<String, String>> states = BrazilianStates.getStates();
 
@@ -53,7 +65,26 @@ public class StudentController {
     private String studentProfile(@PathVariable final UUID uuid, Model model) {
         StudentModel student = this.studentRepository.findById(uuid).orElse(new StudentModel());
         List<Inscription> inscriptionsList = this.inscriptionService.findByStudent(student);
+        List<Period> periods = periodService.findAllOrder();
+        LocalDate now = LocalDate.now();
+        int currentMonth = now.getMonthValue();
+        int currentYear = now.getYear();
 
+        Period selectedPeriod = periods.stream()
+                .filter(p -> p.getMonth() == currentMonth && p.getYear() == currentYear)
+                .findFirst()
+                .orElse(periods.isEmpty() ? null : periods.get(0));
+
+        List<StudentBill> studentBills = studentBillService.GetByStudentAndPeriod(uuid, selectedPeriod.getUuid());
+
+        BigDecimal totalAmount = studentBills.stream()
+                .map(StudentBill::getFinalAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        model.addAttribute("periods", periods);
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("periodSelect", selectedPeriod);
+        model.addAttribute("studentBills", studentBills);
         model.addAttribute("states", states);
         model.addAttribute("inscriptionList", inscriptionsList);
         model.addAttribute("student", student);

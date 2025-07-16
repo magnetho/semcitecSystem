@@ -27,6 +27,11 @@ public class PeriodService {
         return this.periodRepository.findAll();
     }
 
+    public List<Period> findAllOrder() {
+        return this.periodRepository.findAllOrdered();
+    }
+
+
     public Period save(Period periodData) {
       
         return this.periodRepository.save(periodData);

@@ -1,6 +1,5 @@
 package com.luanpereira.semcitecsystem.services;
 
-import com.luanpereira.semcitecsystem.models.Employee;
 import com.luanpereira.semcitecsystem.models.Schedule;
 import com.luanpereira.semcitecsystem.repositories.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

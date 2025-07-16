@@ -2,10 +2,16 @@ package com.luanpereira.semcitecsystem.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +23,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "studentBill")
@@ -27,17 +34,25 @@ public class StudentBill {
     private UUID uuid;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
+    private StudentModel student;
+    @ManyToOne
     @JoinColumn(nullable = true)
     private Inscription inscription;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Period period;
     private LocalDate dueDate;
-    private BigDecimal baseAmount;       
-    private BigDecimal discountAmount;    
-    private BigDecimal additionAmount;     
-    private BigDecimal finalAmount;  
-    private BigDecimal paymentValue;
+    @Column(nullable = false)
+    private BigDecimal baseAmount = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private BigDecimal additionAmount = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private BigDecimal finalAmount = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private BigDecimal paymentValue = BigDecimal.ZERO;
     @Enumerated(EnumType.ORDINAL)
     private PaymentType paymentType;
     private LocalDate paymentDate;
@@ -45,5 +60,19 @@ public class StudentBill {
     private BillType type;
     @Column(length = 500)
     private String observation;
-}
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    public BigDecimal getCurrentBalance() {
+        return baseAmount
+                .subtract(discountAmount)
+                .add(additionAmount)
+                .subtract(paymentValue);
+    }
+
+}

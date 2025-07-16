@@ -1,0 +1,356 @@
+<!-- Begin Page Content -->
+<!-- Content Row -->
+<div class="row">
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <button type="button" class="btn btn-primary h5 mb-0 font-weight-bold" data-bs-toggle="modal"
+                            data-bs-target="#modalNovoLancamento"> Novo Lançamento</button>
+
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total de Lançamentos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(studentBills)}">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fa-solid fa-people-group fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Aluno: <strong th:text="${student.name}">Nome do Aluno</strong>
+        </h4>
+    </div>
+
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+            <form th:action="@{/student/{uuid}(uuid=${student.uuid})}" method="get">
+                <div class="form-group d-flex align-items-center gap-2">
+                    <label for="periodSelect" class="form-label m-0">Período:</label>
+                    <select id="periodSelect" name="period" class="form-select" onchange="this.form.submit()">
+                        <option th:each="p : ${periods}" th:value="${p.uuid}"
+                            th:selected="${p.uuid == periodSelect.uuid}" th:text="${p.month + '/' + p.year}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+        </div>
+
+        <form id="paymentForm" method="post" th:action="@{/student-bill/pay-selected}">
+            <input type="hidden" name="studentId" th:value="${student.uuid}" />
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr class="table-light">
+                            <th><input type="checkbox" onclick="toggleAll(this)" /></th>
+                            <th>Data</th>
+                            <th>Lançamento</th>
+                            <th>Vencimento</th>
+                            <th>Valor Base</th>
+                            <th>Desconto</th>
+                            <th>Acréscimo</th>
+                            <th>Valor Final</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="bill, stat : ${studentBills}">
+                            <td>
+                                <input type="checkbox" name="selectedBills" th:value="${bill.uuid}"
+                                    th:disabled="${bill.finalAmount <=0}" />
+                            </td>
+                            <td th:text="${#temporals.format(bill.updatedAt, 'dd/MM/yyyy')}">1</td>
+                            <td
+                                th:text="${bill.inscription != null ? bill.type + ' - ' + bill.inscription.course.name : bill.type}">
+                            </td>
+                            <td th:text="${#temporals.format(bill.dueDate, 'dd/MM/yyyy')}">15/07/2025</td>
+                            <td th:text="${bill.baseAmount}">1000.00</td>
+                            <td th:text="${bill.discountAmount ?: '0.00'}">0.00</td>
+                            <td th:text="${bill.additionAmount ?: '0.00'}">0.00</td>
+                            <td th:text="${bill.finalAmount}">1000.00</td>
+                            <td>
+                                <div th:if="${bill.type.name() != 'PAGAMENTO' and bill.type.name() != 'DESCONTO'}">
+                                    <!-- Vencido -->
+                                    <span
+                                        th:if="${bill.finalAmount > 0 and totalBills != 0 and bill.dueDate < T(java.time.LocalDate).now()}"
+                                        class="badge bg-warning text-dark">Vencido</span>
+
+                                    <!-- Pago -->
+                                    <span th:if="${bill.finalAmount <= 0 or totalBills == 0}" class="badge bg-success"
+                                        style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                        th:attr="
+                                                data-uuid=${bill.uuid},
+                                                data-payment-date=${ #temporals.format(bill.paymentDate, 'dd/MM/yyyy') },
+                                                data-payment-value=${bill.paymentValue},
+                                                data-payment-type=${bill.paymentType},
+                                                data-observation=${bill.observation}">
+                                        Pago
+                                    </span>
+
+                                    <!-- Pendente -->
+                                    <span
+                                        th:if="${bill.finalAmount > 0 and totalBills != 0 and bill.dueDate >= T(java.time.LocalDate).now()}"
+                                        class="badge bg-secondary">Pendente</span>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#billModal" th:attr="data-uuid=${bill.uuid},
+                                                                    data-due-date=${bill.dueDate},
+                                                                    data-base-amount=${bill.baseAmount},
+                                                                    data-period=${bill.period.uuid},
+                                                                    data-type=${bill.type},
+                                                                    data-observation=${bill.observation}"
+                                    onclick="openEditModal(this)">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <a th:if="${bill.finalAmount > 0}" th:href="@{'/student-bill/pay/' + ${bill.uuid}}"
+                                    class="btn btn-sm btn-outline-success">💲</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(studentBills)}">
+                            <td colspan="10" class="text-center">Nenhum lançamento encontrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+                <div>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#confirmPaymentModal">
+                        💰 Pagar Selecionados
+                    </button>
+                </div>
+                <div>
+                    <strong>Total:</strong>
+                    <span th:text="'R$ ' + ${#numbers.formatDecimal(totalBills, 1, 'COMMA', 2, 'POINT')}">
+                        R$ 0.00
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalNovoLancamento" tabindex="-1" aria-labelledby="modalNovoLancamentoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" th:action="@{/finance/student-bill}" th:object="${newStudentBill}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNovoLancamentoLabel">Novo Lançamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="student" th:value="${student.uuid}" />
+                    <input type="hidden" name="period" th:value="${periodSelect.uuid}" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="type" required>
+                                <option value="" disabled selected>Selecione</option>
+                                <option th:each="t : ${T(com.luanpereira.semcitecsystem.models.BillType).values()}"
+                                    th:value="${t}" th:text="${t}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Vencimento</label>
+                            <input type="date" class="form-control" name="dueDate" required />
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Valor</label>
+                            <input type="number" step="0.01" class="form-control" name="baseAmount" required />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Observação</label>
+                            <textarea class="form-control" name="observation" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"> Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="billModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/finance/student-bill}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Bill</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="uuid" id="billUuid" />
+
+                    <div class="mb-2">
+                        <label>Due Date</label>
+                        <input type="date" name="dueDate" class="form-control" id="dueDate" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Base Amount</label>
+                        <input type="number" name="baseAmount" class="form-control" id="baseAmount" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Type</label>
+                        <select name="type" class="form-select" id="billType">
+                            <option th:each="type : ${T(com.luanpereira.semcitecsystem.models.BillType).values()}"
+                                th:value="${type}" th:text="${type}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Observation</label>
+                        <textarea name="observation" rows="3" class="form-control" id="observation"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Detalhes do Pagamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Data do Pagamento:</strong> <span id="modal-payment-date"></span></p>
+                <p><strong>Valor Pago:</strong> <span id="modal-payment-value"></span></p>
+                <p><strong>Tipo de Pagamento:</strong> <span id="modal-payment-type"></span></p>
+                <p><strong>Observações:</strong> <span id="modal-observation"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmPaymentModalLabel">Confirmar Pagamento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja confirmar o pagamento dos lançamentos selecionados?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        
+        <!-- Este botão envia o formulário -->
+        <button type="button" class="btn btn-success" onclick="submitPaymentForm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function submitPaymentForm() {
+        document.getElementById('paymentForm').submit();
+    }
+</script>
+<script>
+    function toggleAll(source) {
+        const checkboxes = document.querySelectorAll('input[name="selectedBills"]');
+        checkboxes.forEach(cb => {
+            if (!cb.disabled) {
+                cb.checked = source.checked;
+            }
+        });
+    }
+</script>
+<script>
+    function openEditModal(button) {
+        const uuid = button.getAttribute('data-uuid');
+        const dueDate = button.getAttribute('data-due-date');
+        const baseAmount = button.getAttribute('data-base-amount');
+        const type = button.getAttribute('data-type');
+        const observation = button.getAttribute('data-observation');
+
+        document.getElementById('billUuid').value = uuid;
+        document.getElementById('dueDate').value = dueDate;
+        document.getElementById('baseAmount').value = baseAmount;
+        document.getElementById('billType').value = type;
+        document.getElementById('observation').value = observation;
+    }
+</script>
+
+<script>
+    const paymentModal = document.getElementById('paymentModal');
+
+    paymentModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const paymentDate = button.getAttribute('data-payment-date') || '-';
+        const paymentValue = button.getAttribute('data-payment-value') || '-';
+        const paymentType = button.getAttribute('data-payment-type') || '-';
+        const observation = button.getAttribute('data-observation') || '-';
+
+        document.getElementById('modal-payment-date').textContent = paymentDate;
+        document.getElementById('modal-payment-value').textContent = formatCurrency(paymentValue);
+        document.getElementById('modal-payment-type').textContent = paymentType;
+        document.getElementById('modal-observation').textContent = observation;
+    });
+
+    function formatCurrency(value) {
+        if (!value || isNaN(value)) return '-';
+        return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+</script>

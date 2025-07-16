@@ -21,8 +21,8 @@ public class InscriptionService {
         return inscriptionRepository.findByStudentAndCourse(student, course).orElse(null);
     }
 
-    public Inscription findByStatus(Status status) {
-        return inscriptionRepository.findByStatus(status).orElse(null);
+    public List<Inscription> findByStatus(Status status) {
+        return inscriptionRepository.findByStatus(status);
     }
 
     public List<Inscription> findByStudent(StudentModel student) {

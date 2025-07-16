@@ -6,12 +6,16 @@
     <div class="card mb-4 mb-xl-0 shadow">
       <h5 class="card-header text-primary" th:text="${student.name}"></h5>
       <div class="card-body">
-        <p class="text-secondary"><i class="fa fa-phone"> :</i> <span th:text="${student.phone1 + ' / ' + student.phone2}"></span></p>
+        <p class="text-secondary"><i class="fa fa-phone"> :</i> <span
+            th:text="${student.phone1 + ' / ' + student.phone2}"></span></p>
         <p class="text-secondary"><i class="fa fa-envelope"> :</i> <span th:text="${student.email}"></span> </p>
-        <p class="text-secondary"><i class="fa fa-map-location-dot"> :</i> <span th:text="${student.street + ' nº ' + student.houseNumber + ' - ' + student.neighborhood + ' - ' + student.city}"></span></p>
+        <p class="text-secondary"><i class="fa fa-map-location-dot"> :</i> <span
+            th:text="${student.street + ' nº ' + student.houseNumber + ' - ' + student.neighborhood + ' - ' + student.city}"></span>
+        </p>
       </div>
       <div class="card-footer text-center">
-        <a th:href="${'https://web.whatsapp.com/send?1=pt_BR&phone=' + student.phone1}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-2x fa-whatsapp"></i></a>
+        <a th:href="${'https://web.whatsapp.com/send?1=pt_BR&phone=' + student.phone1}" target="_blank"
+          class="btn btn-whatsapp"><i class="fa-brands fa-2x fa-whatsapp"></i></a>
         <a th:href="${'tel:' + student.phone1}" class="btn btn-phone"><i class="fa fa-2x fa-phone fa-shake"></i></a>
       </div>
     </div>
@@ -23,7 +27,8 @@
 
         <ul class="nav nav-tabs card-header-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" id="inscription-tab" href="#inscription-content">Matrícula</a>
+            <a class="nav-link active" data-bs-toggle="tab" id="inscription-tab"
+              href="#inscription-content">Matrícula</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" id="student-bill-tab" href="#student-bill">Financeiro</a>
@@ -43,13 +48,17 @@
         <div class="tab-content">
 
           <div class="tab-pane fade show active" id="inscription-content">
-            <a class="btn btn-outline-success mb-3" th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}" th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Matricular</a>
+            <a class="btn btn-outline-success mb-3"
+              th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"
+              th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Matricular</a>
 
             <div class="card-body text-center p-5" th:if="${#lists.isEmpty(inscriptionList)}">
               <img class="img-fluid mb-4" src="/img/undraw_posting_photo.svg" alt="" style="max-width: 16.25rem">
               <h5>Sem Matrícula</h5>
               <p class="mb-4">O aluno não está matricula em nenhum curso!</p>
-              <a class="btn btn-outline-success p-3" th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"><i class="fa-solid fa-pen-to-square"></i> Matricular</a>
+              <a class="btn btn-outline-success p-3"
+                th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"><i
+                  class="fa-solid fa-pen-to-square"></i> Matricular</a>
             </div>
 
             <ol class="list-group list-group-numbered" th:each="inscription : ${inscriptionList}">
@@ -62,14 +71,21 @@
                 <div class="ms-2 d-flex align-items-end flex-column">
                   <small th:text="${inscription.status}"></small>
                   <div class="dropdown mt-auto">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
                       Opções
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" th:href="@{/pdf/inscriptionPdf/{uuid} (uuid=${inscription.uuid})}" target="_blank">Comprovante</a></li>
-                      <li><a class="dropdown-item" th:href="@{/certificateGenerator/inscription/{uuid} (uuid=${inscription.uuid})}" th:if="${inscription.status.toString() == 'FINALIZADO'}" target="_blank">Certificado</a></li>
-                      <li><a class="dropdown-item disabled" aria-disabled="true" href="#" th:if="${inscription.status.toString() != 'FINALIZADO'}">Certificado</a></li>
-                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" th:href="@{/pdf/inscriptionPdf/{uuid} (uuid=${inscription.uuid})}"
+                          target="_blank">Comprovante</a></li>
+                      <li><a class="dropdown-item"
+                          th:href="@{/certificateGenerator/inscription/{uuid} (uuid=${inscription.uuid})}"
+                          th:if="${inscription.status.toString() == 'FINALIZADO'}" target="_blank">Certificado</a></li>
+                      <li><a class="dropdown-item disabled" aria-disabled="true" href="#"
+                          th:if="${inscription.status.toString() != 'FINALIZADO'}">Certificado</a></li>
+                      <li>
+                        <hr class="dropdown-divider">
+                      </li>
                       <li><a class="dropdown-item text-danger" href="#">Cancelar Matrícula</a></li>
                     </ul>
                   </div>
@@ -78,25 +94,69 @@
             </ol>
           </div>
 
-           <div class="tab-pane fade " id="student-bill">
-            <a class="btn btn-outline-success mb-3" th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}" th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Matricular</a>
+          <div class="tab-pane fade " id="student-bill">
+            <a class="btn btn-outline-success mb-3"
+              th:href="@{/finance/student/{uuid}(uuid=${student.uuid})}"
+              th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Financeiro detalhado</a>
 
             <div class="card-body text-center p-5" th:if="${#lists.isEmpty(inscriptionList)}">
               <img class="img-fluid mb-4" src="/img/undraw_posting_photo.svg" alt="" style="max-width: 16.25rem">
               <h5>Sem Matrícula</h5>
               <p class="mb-4">O aluno não está matricula em nenhum curso!</p>
-              <a class="btn btn-outline-success p-3" th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"><i class="fa-solid fa-pen-to-square"></i> Matricular</a>
+              <a class="btn btn-outline-success p-3"
+                th:href="@{/inscription/newInscription/{uuid}(uuid=${student.uuid})}"><i
+                  class="fa-solid fa-pen-to-square"></i> Financeiro detalhado</a>
+            </div>
+            <div class="card-body">
+
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered" width="100%" cellspacing="0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Lançamento</th>                
+                      <th>Vencimento</th>
+                      <th>Valor Base</th>                   
+                      <th>Status</th>
+                      <th>Valor Final</th>                    
+                    
+               
+                    </tr>
+                  </thead>
+                  <tbody id="studentBillTable" th:fragment="table">
+                    <tr th:each="bill, iter : ${studentBills}">
+                      <td th:text="${iter.count}"></td>
+                      <td th:text="${bill.type}"></td>
+                      <td th:text="${#temporals.format(bill.dueDate, 'dd/MM/yyyy')}"></td>
+                      <td th:text="${bill.baseAmount}"></td>
+                       <td>
+                        <span th:classappend="${bill.paymentDate != null} ? 'badge bg-success' : 'badge bg-danger'">
+                          <span th:text="${bill.paymentDate != null ? 'Pago' : 'Pendente'}"></span>
+                        </span>
+                      </td> 
+                      <td th:text="${bill.finalAmount}"></td>
+                     
+                    </tr>
+
+                    <tr>
+                      <td colspan="5" class="text-end fw-bold">Total:</td>
+                      <td th:text="${totalAmount}">
+                      </td>                      
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <ol class="list-group list-group-numbered" th:each="inscription : ${inscriptionList}">
+            <!-- <ol class="list-group list-group-numbered" th:each="studentBill : ${studentBills}">
               <li class="list-group-item list-group-item-action d-flex w-100 justify-content-between">
                 <div class="ms-2 me-auto">
-                  <h5 class="mb-1" th:text="${inscription.course.name}"></h5>
-                  <p class="mb-1" th:text="${inscription.classroom.name}"></p>
-                  <small th:text="${inscription.inscriptionCode}"></small>
+                  <h5 class="mb-1" th:text="${studentBill.inscription.course.name}"></h5>
+                  <p class="mb-1" th:text="${studentBill.inscription.classroom.name}"></p>
+                  <small th:text="${studentBill.inscription.inscriptionCode}"></small>
                 </div>
                 <div class="ms-2 d-flex align-items-end flex-column">
-                  <small th:text="${inscription.status}"></small>
+                  <small th:text="${studentBill.inscription.status}"></small>
                   <div class="dropdown mt-auto">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Opções
@@ -111,16 +171,17 @@
                   </div>
                 </div>
               </li>
-            </ol>
+            </ol> -->
           </div>
 
           <div class="tab-pane fade" id="description-content">
-            <form method="post" th:action="@{/student/saveDescription}" >
+            <form method="post" th:action="@{/student/saveDescription}">
               <input type="hidden" name="uuid" th:value="${student.uuid}">
               <!-- Form input (Obs)-->
               <div class="mb-3">
                 <label class="small mb-1" for="inputDescription">Observação</label>
-                <textarea class="form-control" name="obs" id="inputDescription" rows="5" th:text="${student.obs}"></textarea>
+                <textarea class="form-control" name="obs" id="inputDescription" rows="5"
+                  th:text="${student.obs}"></textarea>
               </div>
               <!-- Form file (dossier)-->
               <!-- <div class="mb-3">
@@ -143,7 +204,8 @@
                 <!-- Form Group (first name)-->
                 <div class="col-md-12">
                   <label class="small mb-1" for="inputFirstName">Nome completo</label>
-                  <input class="form-control" id="inputFirstName" type="text" name="name" placeholder="Digite seu nome" th:value="${student.name}">
+                  <input class="form-control" id="inputFirstName" type="text" name="name" placeholder="Digite seu nome"
+                    th:value="${student.name}">
                 </div>
               </div>
               <!-- Form Row        -->
@@ -151,36 +213,44 @@
                 <!-- Form Group (organization name)-->
                 <div class="col-md-6">
                   <label class="small mb-1" for="inputPhone1">Telefone 1</label>
-                  <input class="form-control" id="inputPhone1" type="tel" name="phone1" placeholder="Digite seu telefone" th:value="${student.phone1}" maxlength="14" onkeypress="formatter('## # ####-####', this);">
+                  <input class="form-control" id="inputPhone1" type="tel" name="phone1"
+                    placeholder="Digite seu telefone" th:value="${student.phone1}" maxlength="14"
+                    onkeypress="formatter('## # ####-####', this);">
                 </div>
                 <!-- Form Group (organization name)-->
                 <div class="col-md-6">
                   <label class="small mb-1" for="inputPhone2">Telefone 2</label>
-                  <input class="form-control" id="inputPhone2" type="tel" name="phone2" placeholder="Digite seu telefone" th:value="${student.phone2}" maxlength="14" onkeypress="formatter('## # ####-####', this);">
+                  <input class="form-control" id="inputPhone2" type="tel" name="phone2"
+                    placeholder="Digite seu telefone" th:value="${student.phone2}" maxlength="14"
+                    onkeypress="formatter('## # ####-####', this);">
                 </div>
                 <!-- Form Group (organization name)-->
               </div>
               <!-- Form Group (email address)-->
               <div class="mb-3">
                 <label class="small mb-1" for="inputEmailAddress">Email</label>
-                <input class="form-control" id="inputEmailAddress" type="email" name="email" placeholder="Digite seu e-mail" th:value="${student.email}">
+                <input class="form-control" id="inputEmailAddress" type="email" name="email"
+                  placeholder="Digite seu e-mail" th:value="${student.email}">
               </div>
               <!-- Form Row-->
               <div class="row gx-3 mb-3">
                 <!-- Form Group (phone number)-->
                 <div class="col-md-4">
                   <label class="small mb-1" for="inputCpf">CPF</label>
-                  <input class="form-control" id="inputCpf" type="text" name="cpf" placeholder="Digite seu cpf" th:value="${student.cpf}" maxlength="14" onkeypress="formatter('###.###.###-##', this);" required>
+                  <input class="form-control" id="inputCpf" type="text" name="cpf" placeholder="Digite seu cpf"
+                    th:value="${student.cpf}" maxlength="14" onkeypress="formatter('###.###.###-##', this);" required>
                   <span id="cpfError" class="text-danger"></span>
                 </div>
                 <!-- Form Group (birthday)-->
                 <div class="col-md-4">
                   <label class="small mb-1" for="inputBirthday">Nascimento</label>
-                  <input class="form-control" id="inputBirthday" type="date" name="birthday" placeholder="Digite sua data de nascimento" th:value="${student.birthday}">
+                  <input class="form-control" id="inputBirthday" type="date" name="birthday"
+                    placeholder="Digite sua data de nascimento" th:value="${student.birthday}">
                 </div>
                 <div class="col-md-4">
                   <label class="small mb-1" for="inputGender">Gênero</label>
-                  <select class="form-control" id="inputGender" name="gender" aria-label="Floating label select example">
+                  <select class="form-control" id="inputGender" name="gender"
+                    aria-label="Floating label select example">
                     <option th:value="${student.gender}" th:text="${student.gender}" selected></option>
                     <option value="masculino">Masculino</option>
                     <option value="feminino">Feminino</option>
@@ -188,37 +258,41 @@
                   </select>
                 </div>
               </div>
-              <p class="small mb-1" >Endereço</p>
+              <p class="small mb-1">Endereço</p>
               <div class="row gx-3 mb-3">
                 <!-- Form Group (location)-->
                 <div class="col-md-6">
                   <label class="small mb-1" for="inputStreet">Rua</label>
-                  <input class="form-control" id="inputStreet" type="text" name="street" placeholder="Rua" th:value="${student.street}">
+                  <input class="form-control" id="inputStreet" type="text" name="street" placeholder="Rua"
+                    th:value="${student.street}">
                 </div>
                 <div class="col-md-2">
                   <label class="small mb-1" for="inputNumber">Número</label>
-                  <input class="form-control" id="inputNumber" type="text" name="houseNumber" placeholder="Número" th:value="${student.houseNumber}">
+                  <input class="form-control" id="inputNumber" type="text" name="houseNumber" placeholder="Número"
+                    th:value="${student.houseNumber}">
                 </div>
                 <div class="col-md-4">
                   <label class="small mb-1" for="inputNeighborhood">Bairro</label>
-                  <input class="form-control" id="inputNeighborhood" type="text" name="neighborhood" placeholder="Bairro" th:value="${student.neighborhood}">
+                  <input class="form-control" id="inputNeighborhood" type="text" name="neighborhood"
+                    placeholder="Bairro" th:value="${student.neighborhood}">
                 </div>
                 <div class="col-md-5">
                   <label class="small mb-1" for="inputCity">Cidade</label>
-                  <input class="form-control" id="inputCity" type="text" name="city" placeholder="Cidade" th:value="${student.city}">
+                  <input class="form-control" id="inputCity" type="text" name="city" placeholder="Cidade"
+                    th:value="${student.city}">
                 </div>
                 <div class="col-md-4">
                   <label class="small mb-1" for="floatingSelect">Estado</label>
-                  <select class="form-control" id="floatingSelect" name="state" aria-label="Floating label select example">
-                    <option th:each="state : ${states}"
-                            th:value="${state.key}"
-                            th:text="${state.value}"
-                            th:selected="${state.key == student.state}"></option>
+                  <select class="form-control" id="floatingSelect" name="state"
+                    aria-label="Floating label select example">
+                    <option th:each="state : ${states}" th:value="${state.key}" th:text="${state.value}"
+                      th:selected="${state.key == student.state}"></option>
                   </select>
                 </div>
                 <div class="col-md-3">
                   <label class="small mb-1" for="inputZipCode">Cep</label>
-                  <input class="form-control" id="inputZipCode" type="text" name="zip_code" placeholder="Cep" th:value="${student.zip_code}" maxlength="9" onkeypress="formatter('#####-###', this);">
+                  <input class="form-control" id="inputZipCode" type="text" name="zip_code" placeholder="Cep"
+                    th:value="${student.zip_code}" maxlength="9" onkeypress="formatter('#####-###', this);">
                 </div>
               </div>
               <!-- Save changes button-->

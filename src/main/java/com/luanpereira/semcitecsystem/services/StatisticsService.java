@@ -3,7 +3,6 @@ package com.luanpereira.semcitecsystem.services;
 import com.luanpereira.semcitecsystem.models.CourseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

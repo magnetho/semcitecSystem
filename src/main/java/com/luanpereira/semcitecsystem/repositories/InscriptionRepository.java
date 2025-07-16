@@ -16,7 +16,7 @@ public interface InscriptionRepository extends JpaRepository<Inscription, UUID> 
 
     List <Inscription> findByClassroomAndStatus(Classroom classroom, Status status);
 
-    Optional<Inscription> findByStatus(Status status);
+    List<Inscription> findByStatus(Status status);
 
     List<Inscription> findByStudent(StudentModel student);
 
