@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -28,6 +29,10 @@ public class InscriptionController {
     private InscriptionService inscriptionService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PeriodService periodService;
+    @Autowired
+    private FinanceService financeService;
 
     @GetMapping("/newInscription/{uuid}")
     public String newInscription(@PathVariable final UUID uuid, Model model, HttpSession session) {
@@ -40,7 +45,8 @@ public class InscriptionController {
 
         Map<String, List<Classroom>> classroomsPerCourseList = new HashMap<>();
         for (CourseModel course : courseList) {
-            classroomsPerCourseList.put(course.getName(), this.classroomService.findByCourseUuidOrderByName(course.getUuid()));
+            classroomsPerCourseList.put(course.getName(),
+                    this.classroomService.findByCourseUuidOrderByName(course.getUuid()));
         }
 
         model.addAttribute("classroomList", classroomsPerCourseList);
@@ -56,15 +62,21 @@ public class InscriptionController {
     public String saveInscription(Inscription inscriptionData, RedirectAttributes redirectAttributes) {
         String successMsg = "";
 
+        LocalDate now = LocalDate.now();
+        periodService.getByMonthAndYear(now.getMonthValue(), now.getYear())
+                .ifPresent(p -> {   
+                    financeService.generateStudentBillsForPeriod(p);
+                });
+
         // Verifica se o aluno já possui inscrição no curso ou ativa
-        List<Inscription> inscriptionsOfTheStudent = this.inscriptionService.findByStudent(inscriptionData.getStudent());
+        List<Inscription> inscriptionsOfTheStudent = this.inscriptionService
+                .findByStudent(inscriptionData.getStudent());
 
         boolean anyRestriction = inscriptionsOfTheStudent.stream()
-            .anyMatch(inscription ->
+                .anyMatch(inscription ->
                 // Comparar por ID ou UUID, mais seguro
                 inscription.getCourse().getUuid().equals(inscriptionData.getCourse().getUuid()) &&
-                inscription.getStatus() == Status.ATIVO
-            );
+                        inscription.getStatus() == Status.ATIVO);
 
         if (anyRestriction) {
             redirectAttributes.addFlashAttribute("errorMsg", "Aluno já matriculado ou com matrícula ativa.");
@@ -72,12 +84,14 @@ public class InscriptionController {
         }
 
         // Verifica capacidade da turma
-        int classroomVacancies = this.classroomService.findById(inscriptionData.getClassroom().getUuid()).getVacancies();
+        int classroomVacancies = this.classroomService.findById(inscriptionData.getClassroom().getUuid())
+                .getVacancies();
 
-        long totalInscriptionPerClassroom = this.inscriptionService.findByClassroom(inscriptionData.getClassroom()).stream()
-            .filter(inscription -> 
-                inscription.getStatus() == Status.ATIVO || inscription.getStatus() == Status.PENDENTE
-            ).count();
+        long totalInscriptionPerClassroom = this.inscriptionService.findByClassroom(inscriptionData.getClassroom())
+                .stream()
+                .filter(inscription -> inscription.getStatus() == Status.ATIVO
+                        || inscription.getStatus() == Status.PENDENTE)
+                .count();
 
         // Define status da matrícula
         if (totalInscriptionPerClassroom >= classroomVacancies) {
@@ -90,17 +104,17 @@ public class InscriptionController {
 
         // Gera código de inscrição antes de salvar
         try {
-           inscriptionData.setInscriptionCode("0");
+            inscriptionData.setInscriptionCode("0");
             this.inscriptionService.save(inscriptionData);
             redirectAttributes.addFlashAttribute("successMsg", successMsg);
             String inscriptionCode = String.format("%04d%02d%06d",
                     inscriptionData.getInscriptionDate().getYear(),
                     inscriptionData.getInscriptionDate().getMonthValue(),
                     this.inscriptionService.getNextValFromSequence());
-        
+
             inscriptionData.setInscriptionCode(inscriptionCode);
             this.inscriptionService.save(inscriptionData);
-        
+
             redirectAttributes.addFlashAttribute("successMsg", successMsg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMsg", "Erro ao realizar a matrícula");

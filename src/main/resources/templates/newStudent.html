@@ -1,113 +1,258 @@
 <!-- Begin Page Content -->
-<!-- DataTales Example -->
 <div class="card o-hidden border-0 shadow-lg mb-2" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="card-body p-0">
-        <!-- Nested Row within Card Body -->
         <div class="row">
             <div class="col-lg-9">
                 <div class="p-5">
-                    <!-- Verifica o resultado da operação e exibe a mensagem correspondente -->
-                    <div th:if="${param.success}" class="alert alert-success">
-                        Estudante cadastrado com sucesso!
-                    </div>
 
-                    <div th:if="${param.fail}" class="alert alert-danger">
-                        Falha ao cadastrar estudante!
-                    </div>
+                    <!-- Alertas -->
+                    <div th:if="${param.success}" class="alert alert-success">Estudante cadastrado com sucesso!</div>
+                    <div th:if="${param.fail}" class="alert alert-danger">Falha ao cadastrar estudante!</div>
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-3" id="studentTab" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dados"
+                                role="tab">Dados Básicos</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#endereco"
+                                role="tab">Endereço</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#escola"
+                                role="tab">Escolares</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#saude-content" role="tab">Saúde</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#marketing"
+                                role="tab">Marketing</a></li>
+                    </ul>
 
                     <form method="post" enctype="multipart/form-data" th:action="@{/student/saveStudent}">
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (first name)-->
-                            <div class="col-md-12">
-                                <label class="small mb-1" for="inputFullName">Nome completo</label>
-                                <input class="form-control" id="inputFullName" type="text" name="name" placeholder="Nome do aluno" required>
+                        <div class="tab-content">
+
+                            <!-- Aba: Dados Básicos -->
+                            <div class="tab-pane fade show active" id="dados" role="tabpanel">
+                                <div class="form-group">
+                                    <label>Nome completo</label>
+                                    <input class="form-control" type="text" name="name" placeholder="Nome do aluno"
+                                        required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>CPF</label>
+                                        <input class="form-control" type="text" name="cpf" maxlength="14"
+                                            onkeypress="formatter('###.###.###-##', this);" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Gênero</label>
+                                        <select class="form-control" name="gender">
+                                            <option value="masculino">Masculino</option>
+                                            <option value="feminino">Feminino</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label>Telefone 1 (WhatsApp)</label>
+                                        <input class="form-control" type="tel" name="phone1" maxlength="14"
+                                            onkeypress="formatter('## # ####-####', this);">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Telefone 2</label>
+                                        <input class="form-control" type="tel" name="phone2" maxlength="14"
+                                            onkeypress="formatter('## # ####-####', this);">
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label>Data de nascimento</label>
+                                        <input class="form-control" type="date" name="birthday">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Email</label>
+                                        <input class="form-control" type="email" name="email">
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label>Nome da mãe *</label>
+                                        <input class="form-control" type="text" name="motherName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Nome do pai</label>
+                                        <input class="form-control" type="text" name="fatherName">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Form Row        -->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (organization name)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputCpf">CPF</label>
-                                <input class="form-control" id="inputCpf" type="text" name="cpf" placeholder="CPF do aluno" maxlength="14" onkeypress="formatter('###.###.###-##', this);" required>
-                                <span id="cpfError" class="text-danger"></span>
+
+                            <!-- Aba: Endereço -->
+                            <div class="tab-pane fade" id="endereco" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Rua</label>
+                                        <input class="form-control" type="text" name="street">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Número</label>
+                                        <input class="form-control" type="text" name="houseNumber">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Bairro</label>
+                                        <input class="form-control" type="text" name="neighborhood">
+                                    </div>
+                                    <div class="col-md-5 mt-2">
+                                        <label>Cidade</label>
+                                        <input class="form-control" type="text" name="city">
+                                    </div>
+                                    <div class="col-md-4 mt-2">
+                                        <label>Estado</label>
+                                        <select class="form-control" name="state">
+                                            <option th:each="state : ${states}" th:value="${state.key}"
+                                                th:text="${state.value}" th:selected="${state.key == 'MA'}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-2">
+                                        <label>CEP</label>
+                                        <input class="form-control" type="text" name="zip_code" maxlength="9"
+                                            onkeypress="formatter('#####-###', this);">
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Form Group (organization name)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputGender">Gênero</label>
-                                <select class="form-control" id="inputGender" name="gender" aria-label="Floating label select example">
-                                    <option value="masculino" selected>Masculino</option>
-                                    <option value="feminino">Feminino</option>
-                                    <option value="outro">Outro</option>
-                                </select>
+
+                            <!-- Aba: Escolares -->
+                            <div class="tab-pane fade" id="escola" role="tabpanel">
+                                <div class="form-group">
+                                    <label>Escola de origem</label>
+                                    <input class="form-control" type="text" name="originSchool">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Série</label>
+                                        <input class="form-control" type="text" name="grade">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Turno</label>
+                                        <select class="form-control" name="shift">
+                                            <option value="">Selecione</option>
+                                            <option value="MANHA">Manhã</option>
+                                            <option value="TARDE">Tarde</option>
+                                            <option value="NOITE">Noite</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Form Group (email address)-->
-                        <div class="mb-3">
-                            <label class="small mb-1" for="inputEmailAddress">E-mail</label>
-                            <input class="form-control" id="inputEmailAddress" type="email" name="email" placeholder="E-mail do aluno" >
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="inputPhone1">Telefone 1 (Whatsapp)</label>
-                                <input class="form-control" id="inputPhone1" type="tel" name="phone1" placeholder="Telefone do aluno" maxlength="14" onkeypress="formatter('## # ####-####', this);">
+
+                            <!-- Aba Saúde -->
+                            <div class="tab-pane fade" id="saude-content" role="tabpanel">
+                                <h5 class="mt-3 mb-3">Informações de Saúde</h5>
+
+                                <!-- Possui deficiência -->
+                                <div class="form-group">
+                                    <label for="hasDeficiency">Possui deficiência?</label>
+                                    <select class="form-control" id="hasDeficiency" name="hasDeficiency">
+                                        <option value="nao">Não</option>
+                                        <option value="sim">Sim</option>
+                                    </select>
+                                </div>
+
+                                <!-- Qual deficiência -->
+                                <div class="form-group d-none" id="deficiencyGroup">
+                                    <label for="deficiency">Qual deficiência?</label>
+                                    <input type="text" class="form-control" name="deficiency" id="deficiency"
+                                        placeholder="Descreva a deficiência">
+                                </div>
+
+                                <!-- Usa medicamento -->
+                                <div class="form-group">
+                                    <label for="usesMedicine">Usa medicamento?</label>
+                                    <select class="form-control" id="usesMedicine" name="usesMedicine">
+                                        <option value="nao">Não</option>
+                                        <option value="sim">Sim</option>
+                                    </select>
+                                </div>
+
+                                <!-- Qual medicamento -->
+                                <div class="form-group d-none" id="medicineGroup">
+                                    <label for="medicine">Qual medicamento?</label>
+                                    <input type="text" class="form-control" name="medicine" id="medicine"
+                                        placeholder="Descreva o medicamento">
+                                </div>
+
+                                <!-- Possui problema de saúde -->
+                                <div class="form-group">
+                                    <label for="hasHealthIssue">Possui problema de saúde?</label>
+                                    <select class="form-control" id="hasHealthIssue" name="hasHealthIssue">
+                                        <option value="nao">Não</option>
+                                        <option value="sim">Sim</option>
+                                    </select>
+                                </div>
+
+                                <!-- Qual problema -->
+                                <div class="form-group d-none" id="healthIssueGroup">
+                                    <label for="healthIssue">Qual problema de saúde?</label>
+                                    <input type="text" class="form-control" name="healthIssue" id="healthIssue"
+                                        placeholder="Descreva o problema de saúde">
+                                </div>
+
+                                <!-- Contato de emergência -->
+                                <div class="form-group">
+                                    <label for="emergencyContactName">Pessoa para emergência</label>
+                                    <input type="text" class="form-control" name="emergencyContactName"
+                                        id="emergencyContactName" placeholder="Nome da pessoa para emergência">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emergencyContactPhone">Telefone da pessoa para emergência</label>
+                                    <input type="tel" class="form-control" name="emergencyContactPhone"
+                                        id="emergencyContactPhone" placeholder="Telefone de emergência" maxlength="14"
+                                        onkeypress="formatter('## # ####-####', this);">
+                                </div>
                             </div>
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="inputPhone2">Telefone 2</label>
-                                <input class="form-control" id="inputPhone2" type="tel" name="phone2" placeholder="Telefone do aluno" maxlength="14" onkeypress="formatter('## # ####-####', this);">
+
+
+                            <!-- Aba: Marketing -->
+                            <div class="tab-pane fade" id="marketing" role="tabpanel">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allowImageUse"
+                                        id="imageCheck">
+                                    <label class="form-check-label" for="imageCheck">Permite uso da imagem?</label>
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label>Como ficou sabendo da empresa?</label>
+                                    <input class="form-control" type="text" name="referralSource">
+                                </div>
                             </div>
-                            <!-- Form Group (birthday)-->
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="inputBirthday">Nascimento</label>
-                                <input class="form-control" id="inputBirthday" type="date" name="birthday" placeholder="Data de nascimento do aluno" >
-                            </div>
-                            <!-- Form Group (phone number)-->
                         </div>
 
-                        <p class="small mb-1" >Endereço</p>
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (location)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputStreet">Rua</label>
-                                <input class="form-control" id="inputStreet" type="text" name="street" placeholder="Rua" >
-                            </div>
-                            <div class="col-md-2">
-                                <label class="small mb-1" for="inputLocationNumber">Número</label>
-                                <input class="form-control" id="inputLocationNumber" type="text" name="houseNumber" placeholder="Número" >
-                            </div>
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="inputNeighborhood">Bairro</label>
-                                <input class="form-control" id="inputNeighborhood" type="text" name="neighborhood" placeholder="Bairro" >
-                            </div>
-                            <div class="col-md-5">
-                                <label class="small mb-1" for="inputCity">Cidade</label>
-                                <input class="form-control" id="inputCity" type="text" name="city" placeholder="Cidade" >
-                            </div>
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="floatingSelectState">Estado</label>
-                                <select class="form-control" id="floatingSelectState" name="state" aria-label="Floating label select example">
-                                    <option th:each="state : ${states}"
-                                            th:value="${state.key}"
-                                            th:text="${state.value}"
-                                            th:selected="${state.key == 'MA'}"></option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="small mb-1" for="inputZipCode">Cep</label>
-                                <input class="form-control" id="inputZipCode" type="text" name="zip_code" placeholder="Cep" maxlength="9" onkeypress="formatter('#####-###', this);">
-                            </div>
-                        </div>
-                        <!-- Save changes button-->
-                        <input type="hidden" name="uuid" >
-                        <button class="btn btn-primary" type="submit">Cadastrar</button>
+                        <input type="hidden" name="uuid">
+                        <button class="btn btn-primary mt-4" type="submit">Cadastrar</button>
                     </form>
+
                 </div>
             </div>
             <div class="col-lg-3 d-none d-lg-block bg-newStudent-image"></div>
         </div>
     </div>
 </div>
-<!-- /.container-fluid -->
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    function toggleField(selectId, groupId) {
+      const select = document.getElementById(selectId);
+      const group = document.getElementById(groupId);
+
+      function toggle() {
+        group.classList.toggle("d-none", select.value !== "sim");
+      }
+
+      toggle(); // Executa na carga
+      select.addEventListener("change", toggle); // Executa na troca
+    }
+
+    toggleField("hasDeficiency", "deficiencyGroup");
+    toggleField("usesMedicine", "medicineGroup");
+    toggleField("hasHealthIssue", "healthIssueGroup");
+  });
+</script>

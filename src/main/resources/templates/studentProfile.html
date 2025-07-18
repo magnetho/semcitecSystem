@@ -39,8 +39,6 @@
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" id="details-tab" href="#details-content">Editar</a>
           </li>
-
-
         </ul>
 
       </div>
@@ -95,9 +93,9 @@
           </div>
 
           <div class="tab-pane fade " id="student-bill">
-            <a class="btn btn-outline-success mb-3"
-              th:href="@{/finance/student/{uuid}(uuid=${student.uuid})}"
-              th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Financeiro detalhado</a>
+            <a class="btn btn-outline-success mb-3" th:href="@{/finance/student/{uuid}(uuid=${student.uuid})}"
+              th:if="${!#lists.isEmpty(inscriptionList)}"><i class="fa-solid fa-pen-to-square"></i> Financeiro
+              detalhado</a>
 
             <div class="card-body text-center p-5" th:if="${#lists.isEmpty(inscriptionList)}">
               <img class="img-fluid mb-4" src="/img/undraw_posting_photo.svg" alt="" style="max-width: 16.25rem">
@@ -114,13 +112,13 @@
                   <thead class="table-light">
                     <tr>
                       <th>#</th>
-                      <th>Lançamento</th>                
+                      <th>Lançamento</th>
                       <th>Vencimento</th>
-                      <th>Valor Base</th>                   
+                      <th>Valor Base</th>
                       <th>Status</th>
-                      <th>Valor Final</th>                    
-                    
-               
+                      <th>Valor Final</th>
+
+
                     </tr>
                   </thead>
                   <tbody id="studentBillTable" th:fragment="table">
@@ -129,19 +127,19 @@
                       <td th:text="${bill.type}"></td>
                       <td th:text="${#temporals.format(bill.dueDate, 'dd/MM/yyyy')}"></td>
                       <td th:text="${bill.baseAmount}"></td>
-                       <td>
+                      <td>
                         <span th:classappend="${bill.paymentDate != null} ? 'badge bg-success' : 'badge bg-danger'">
                           <span th:text="${bill.paymentDate != null ? 'Pago' : 'Pendente'}"></span>
                         </span>
-                      </td> 
+                      </td>
                       <td th:text="${bill.finalAmount}"></td>
-                     
+
                     </tr>
 
                     <tr>
                       <td colspan="5" class="text-end fw-bold">Total:</td>
                       <td th:text="${totalAmount}">
-                      </td>                      
+                      </td>
                     </tr>
                   </tbody>
                 </table>

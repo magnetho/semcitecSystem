@@ -37,5 +37,9 @@ public class PeriodService {
         return this.periodRepository.save(periodData);
     }
     
+     public Optional<Period> getByMonthAndYear(int month, int year) {
+        return periodRepository.findByMonthAndYear(month, year);
+    }
+    
     
 }
