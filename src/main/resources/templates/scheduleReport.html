@@ -1,0 +1,38 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Horários</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Horário</th>
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="timeSlot : ${#lists.sort(#sets.toSet(schedules.?[dayOfWeek.ordinal <= 5].![startTime]))}">
+            <td>
+                <span th:text="${timeSlot} + ' - ' + ${schedules.?[startTime == timeSlot].?[0].endTime}">08:00 - 09:00</span>
+            </td>
+            <td th:each="day : ${T(java.time.DayOfWeek).values()}"
+                th:if="${day.ordinal >= 1 and day.ordinal <= 5}">
+                
+                <span th:each="s : ${schedules}"
+                      th:if="${s.dayOfWeek == day and s.startTime == timeSlot}"
+                      th:text="${s.classroom.name} + ' - ' + ${s.user.name}"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->

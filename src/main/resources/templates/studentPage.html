@@ -66,11 +66,14 @@
                                     class="fa-solid fa-address-card"></i></a>
                             <a class="btn btn-outline-success"
                                 th:href="@{/inscription/newInscription/{uuid} (uuid=${student.uuid})}"
-                                data-bs-toggle="tooltip" data-bs-title="Matricular aluno"><i
-                                    class="fa-solid fa-pen-to-square"></i></a>
+                                data-bs-toggle="tooltip" data-bs-title="Matricular aluno"> <i
+                                    class="fa-solid fa-file-signature"></i></a>
                             <a class="btn btn-outline-success"
                                 th:href="@{/finance/student/{uuid} (uuid=${student.uuid})}" data-bs-toggle="tooltip"
                                 data-bs-title="Financeiro"><i class="fa-solid fa-dollar-sign"></i></a>
+                            <a class="btn btn-outline-success" th:href="@{/student/edit/{uuid} (uuid=${student.uuid})}"
+                                data-bs-toggle="tooltip" data-bs-title="Editar"><i
+                                    class="fa-solid fa-pen-to-square"></i></a>
                         </td>
                     </tr>
                 </tbody>

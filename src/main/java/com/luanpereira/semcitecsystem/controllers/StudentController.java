@@ -56,7 +56,20 @@ public class StudentController {
     public String newStudent(Model model) {
         model.addAttribute("states", states);
 
+        model.addAttribute("student", new StudentModel());
         model.addAttribute("contentTitle", "Novo Aluno");
+        model.addAttribute("content", "newStudent");
+        return "default";
+    }
+
+     @GetMapping("/edit/{uuid}")
+    public String EditStudent(@PathVariable final UUID uuid, Model model) {
+
+        StudentModel student = this.studentRepository.findById(uuid).orElse(new StudentModel());
+        model.addAttribute("states", states);
+
+        model.addAttribute("student", student);
+        model.addAttribute("contentTitle", "Editar Aluno");
         model.addAttribute("content", "newStudent");
         return "default";
     }

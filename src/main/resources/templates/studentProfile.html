@@ -37,7 +37,7 @@
             <a class="nav-link" data-bs-toggle="tab" id="description-tab" href="#description-content">Descrição</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" id="details-tab" href="#details-content">Editar</a>
+            <a class="nav-link" th:href="@{/student/edit/{uuid}(uuid=${student.uuid})}">Editar</a>
           </li>
         </ul>
 
@@ -196,107 +196,8 @@
           </div>
 
           <div class="tab-pane fade" id="details-content">
-            <form method="post" enctype="multipart/form-data" th:action="@{/student/saveStudent}" id="inputValidation">
-              <!-- Form Row-->
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (first name)-->
-                <div class="col-md-12">
-                  <label class="small mb-1" for="inputFirstName">Nome completo</label>
-                  <input class="form-control" id="inputFirstName" type="text" name="name" placeholder="Digite seu nome"
-                    th:value="${student.name}">
-                </div>
-              </div>
-              <!-- Form Row        -->
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (organization name)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputPhone1">Telefone 1</label>
-                  <input class="form-control" id="inputPhone1" type="tel" name="phone1"
-                    placeholder="Digite seu telefone" th:value="${student.phone1}" maxlength="14"
-                    onkeypress="formatter('## # ####-####', this);">
-                </div>
-                <!-- Form Group (organization name)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputPhone2">Telefone 2</label>
-                  <input class="form-control" id="inputPhone2" type="tel" name="phone2"
-                    placeholder="Digite seu telefone" th:value="${student.phone2}" maxlength="14"
-                    onkeypress="formatter('## # ####-####', this);">
-                </div>
-                <!-- Form Group (organization name)-->
-              </div>
-              <!-- Form Group (email address)-->
-              <div class="mb-3">
-                <label class="small mb-1" for="inputEmailAddress">Email</label>
-                <input class="form-control" id="inputEmailAddress" type="email" name="email"
-                  placeholder="Digite seu e-mail" th:value="${student.email}">
-              </div>
-              <!-- Form Row-->
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (phone number)-->
-                <div class="col-md-4">
-                  <label class="small mb-1" for="inputCpf">CPF</label>
-                  <input class="form-control" id="inputCpf" type="text" name="cpf" placeholder="Digite seu cpf"
-                    th:value="${student.cpf}" maxlength="14" onkeypress="formatter('###.###.###-##', this);" required>
-                  <span id="cpfError" class="text-danger"></span>
-                </div>
-                <!-- Form Group (birthday)-->
-                <div class="col-md-4">
-                  <label class="small mb-1" for="inputBirthday">Nascimento</label>
-                  <input class="form-control" id="inputBirthday" type="date" name="birthday"
-                    placeholder="Digite sua data de nascimento" th:value="${student.birthday}">
-                </div>
-                <div class="col-md-4">
-                  <label class="small mb-1" for="inputGender">Gênero</label>
-                  <select class="form-control" id="inputGender" name="gender"
-                    aria-label="Floating label select example">
-                    <option th:value="${student.gender}" th:text="${student.gender}" selected></option>
-                    <option value="masculino">Masculino</option>
-                    <option value="feminino">Feminino</option>
-                    <option value="outro">Outro</option>
-                  </select>
-                </div>
-              </div>
-              <p class="small mb-1">Endereço</p>
-              <div class="row gx-3 mb-3">
-                <!-- Form Group (location)-->
-                <div class="col-md-6">
-                  <label class="small mb-1" for="inputStreet">Rua</label>
-                  <input class="form-control" id="inputStreet" type="text" name="street" placeholder="Rua"
-                    th:value="${student.street}">
-                </div>
-                <div class="col-md-2">
-                  <label class="small mb-1" for="inputNumber">Número</label>
-                  <input class="form-control" id="inputNumber" type="text" name="houseNumber" placeholder="Número"
-                    th:value="${student.houseNumber}">
-                </div>
-                <div class="col-md-4">
-                  <label class="small mb-1" for="inputNeighborhood">Bairro</label>
-                  <input class="form-control" id="inputNeighborhood" type="text" name="neighborhood"
-                    placeholder="Bairro" th:value="${student.neighborhood}">
-                </div>
-                <div class="col-md-5">
-                  <label class="small mb-1" for="inputCity">Cidade</label>
-                  <input class="form-control" id="inputCity" type="text" name="city" placeholder="Cidade"
-                    th:value="${student.city}">
-                </div>
-                <div class="col-md-4">
-                  <label class="small mb-1" for="floatingSelect">Estado</label>
-                  <select class="form-control" id="floatingSelect" name="state"
-                    aria-label="Floating label select example">
-                    <option th:each="state : ${states}" th:value="${state.key}" th:text="${state.value}"
-                      th:selected="${state.key == student.state}"></option>
-                  </select>
-                </div>
-                <div class="col-md-3">
-                  <label class="small mb-1" for="inputZipCode">Cep</label>
-                  <input class="form-control" id="inputZipCode" type="text" name="zip_code" placeholder="Cep"
-                    th:value="${student.zip_code}" maxlength="9" onkeypress="formatter('#####-###', this);">
-                </div>
-              </div>
-              <!-- Save changes button-->
-              <input type="hidden" name="uuid" th:value="${student.uuid}">
-              <button class="btn btn-primary" type="submit">Salvar Mudanças</button>
-            </form>
+            <a class="btn btn-outline-success" th:href="@{/student/edit/{uuid} (uuid=${student.uuid})}"
+              data-bs-toggle="tooltip" data-bs-title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
           </div>
 
         </div>

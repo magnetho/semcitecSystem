@@ -23,7 +23,6 @@ public class StudentModel {
 
     private String name;
 
-    @Column(unique = true)
     private String cpf;
 
     private LocalDate birthday;
@@ -40,7 +39,7 @@ public class StudentModel {
     private String neighborhood;
     private String city;
     private String state;
-    private String zip_code;
+    private String zipCode;
 
     @Column(columnDefinition = "TEXT")
     private String obs;

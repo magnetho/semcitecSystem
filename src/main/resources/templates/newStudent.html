@@ -6,43 +6,38 @@
                 <div class="p-5">
 
                     <!-- Alertas -->
-                    <div th:if="${param.success}" class="alert alert-success">Estudante cadastrado com sucesso!</div>
-                    <div th:if="${param.fail}" class="alert alert-danger">Falha ao cadastrar estudante!</div>
+                    <div th:if="${param.success}" class="alert alert-success">Estudante salvo com sucesso!</div>
+                    <div th:if="${param.fail}" class="alert alert-danger">Falha ao salvar estudante!</div>
 
                     <!-- Tabs -->
                     <ul class="nav nav-tabs mb-3" id="studentTab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dados"
-                                role="tab">Dados Básicos</a></li>
-                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#endereco"
-                                role="tab">Endereço</a></li>
-                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#escola"
-                                role="tab">Escolares</a></li>
-                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#saude-content" role="tab">Saúde</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#marketing"
-                                role="tab">Marketing</a></li>
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dados" role="tab">Dados Básicos</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#endereco" role="tab">Endereço</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#escola" role="tab">Escolares</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#saude-content" role="tab">Saúde</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#marketing" role="tab">Marketing</a></li>
                     </ul>
 
-                    <form method="post" enctype="multipart/form-data" th:action="@{/student/saveStudent}">
+                    <!-- Formulário -->
+                    <form method="post" enctype="multipart/form-data" th:action="@{/student/saveStudent}" th:object="${student}">
                         <div class="tab-content">
 
                             <!-- Aba: Dados Básicos -->
                             <div class="tab-pane fade show active" id="dados" role="tabpanel">
                                 <div class="form-group">
                                     <label>Nome completo</label>
-                                    <input class="form-control" type="text" name="name" placeholder="Nome do aluno"
-                                        required>
+                                    <input class="form-control" type="text" th:field="*{name}" placeholder="Nome do aluno" required>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>CPF</label>
-                                        <input class="form-control" type="text" name="cpf" maxlength="14"
-                                            onkeypress="formatter('###.###.###-##', this);" required>
+                                        <input class="form-control" type="text" th:field="*{cpf}" maxlength="14"
+                                               onkeypress="formatter('###.###.###-##', this);">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Gênero</label>
-                                        <select class="form-control" name="gender">
+                                        <select class="form-control" th:field="*{gender}">
                                             <option value="masculino">Masculino</option>
                                             <option value="feminino">Feminino</option>
                                             <option value="outro">Outro</option>
@@ -53,35 +48,35 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Telefone 1 (WhatsApp)</label>
-                                        <input class="form-control" type="tel" name="phone1" maxlength="14"
-                                            onkeypress="formatter('## # ####-####', this);">
+                                        <input class="form-control" type="tel" th:field="*{phone1}" maxlength="14"
+                                               onkeypress="formatter('## # ####-####', this);">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Telefone 2</label>
-                                        <input class="form-control" type="tel" name="phone2" maxlength="14"
-                                            onkeypress="formatter('## # ####-####', this);">
+                                        <input class="form-control" type="tel" th:field="*{phone2}" maxlength="14"
+                                               onkeypress="formatter('## # ####-####', this);">
                                     </div>
                                 </div>
 
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Data de nascimento</label>
-                                        <input class="form-control" type="date" name="birthday">
+                                        <input class="form-control" type="date" th:field="*{birthday}">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Email</label>
-                                        <input class="form-control" type="email" name="email">
+                                        <input class="form-control" type="email" th:field="*{email}">
                                     </div>
                                 </div>
 
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <label>Nome da mãe *</label>
-                                        <input class="form-control" type="text" name="motherName" required>
+                                        <input class="form-control" type="text" th:field="*{motherName}" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Nome do pai</label>
-                                        <input class="form-control" type="text" name="fatherName">
+                                        <input class="form-control" type="text" th:field="*{fatherName}">
                                     </div>
                                 </div>
                             </div>
@@ -91,31 +86,32 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>Rua</label>
-                                        <input class="form-control" type="text" name="street">
+                                        <input class="form-control" type="text" th:field="*{street}">
                                     </div>
                                     <div class="col-md-2">
                                         <label>Número</label>
-                                        <input class="form-control" type="text" name="houseNumber">
+                                        <input class="form-control" type="text" th:field="*{houseNumber}">
                                     </div>
                                     <div class="col-md-4">
                                         <label>Bairro</label>
-                                        <input class="form-control" type="text" name="neighborhood">
+                                        <input class="form-control" type="text" th:field="*{neighborhood}">
                                     </div>
                                     <div class="col-md-5 mt-2">
                                         <label>Cidade</label>
-                                        <input class="form-control" type="text" name="city">
+                                        <input class="form-control" type="text" th:field="*{city}">
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <label>Estado</label>
-                                        <select class="form-control" name="state">
+                                        <select class="form-control" th:field="*{state}">
                                             <option th:each="state : ${states}" th:value="${state.key}"
-                                                th:text="${state.value}" th:selected="${state.key == 'MA'}"></option>
+                                                    th:text="${state.value}">
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 mt-2">
                                         <label>CEP</label>
-                                        <input class="form-control" type="text" name="zip_code" maxlength="9"
-                                            onkeypress="formatter('#####-###', this);">
+                                        <input class="form-control" type="text" th:field="*{zipCode}" maxlength="9"
+                                               onkeypress="formatter('#####-###', this);">
                                     </div>
                                 </div>
                             </div>
@@ -124,16 +120,16 @@
                             <div class="tab-pane fade" id="escola" role="tabpanel">
                                 <div class="form-group">
                                     <label>Escola de origem</label>
-                                    <input class="form-control" type="text" name="originSchool">
+                                    <input class="form-control" type="text" th:field="*{originSchool}">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>Série</label>
-                                        <input class="form-control" type="text" name="grade">
+                                        <input class="form-control" type="text" th:field="*{grade}">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Turno</label>
-                                        <select class="form-control" name="shift">
+                                        <select class="form-control" th:field="*{shift}">
                                             <option value="">Selecione</option>
                                             <option value="MANHA">Manhã</option>
                                             <option value="TARDE">Tarde</option>
@@ -143,92 +139,78 @@
                                 </div>
                             </div>
 
-                            <!-- Aba Saúde -->
+                            <!-- Aba: Saúde -->
                             <div class="tab-pane fade" id="saude-content" role="tabpanel">
                                 <h5 class="mt-3 mb-3">Informações de Saúde</h5>
 
-                                <!-- Possui deficiência -->
                                 <div class="form-group">
-                                    <label for="hasDeficiency">Possui deficiência?</label>
-                                    <select class="form-control" id="hasDeficiency" name="hasDeficiency">
-                                        <option value="nao">Não</option>
-                                        <option value="sim">Sim</option>
+                                    <label for="hasDisability">Possui deficiência?</label>
+                                    <select class="form-control" id="hasDisability" th:field="*{hasDisability}">
+                                        <option value="false">Não</option>
+                                        <option value="true">Sim</option>
                                     </select>
                                 </div>
 
-                                <!-- Qual deficiência -->
                                 <div class="form-group d-none" id="deficiencyGroup">
-                                    <label for="deficiency">Qual deficiência?</label>
-                                    <input type="text" class="form-control" name="deficiency" id="deficiency"
-                                        placeholder="Descreva a deficiência">
+                                    <label for="disability">Qual deficiência?</label>
+                                    <input type="text" class="form-control" th:field="*{disability}" id="disability" placeholder="Descreva a deficiência">
                                 </div>
 
-                                <!-- Usa medicamento -->
                                 <div class="form-group">
-                                    <label for="usesMedicine">Usa medicamento?</label>
-                                    <select class="form-control" id="usesMedicine" name="usesMedicine">
-                                        <option value="nao">Não</option>
-                                        <option value="sim">Sim</option>
+                                    <label for="usesMedication">Usa medicamento?</label>
+                                    <select class="form-control" id="usesMedication" th:field="*{usesMedication}">
+                                        <option value="false">Não</option>
+                                        <option value="true">Sim</option>
                                     </select>
                                 </div>
 
-                                <!-- Qual medicamento -->
                                 <div class="form-group d-none" id="medicineGroup">
-                                    <label for="medicine">Qual medicamento?</label>
-                                    <input type="text" class="form-control" name="medicine" id="medicine"
-                                        placeholder="Descreva o medicamento">
+                                    <label for="medication">Qual medicamento?</label>
+                                    <input type="text" class="form-control" th:field="*{medication}" id="medication" placeholder="Descreva o medicamento">
                                 </div>
 
-                                <!-- Possui problema de saúde -->
                                 <div class="form-group">
-                                    <label for="hasHealthIssue">Possui problema de saúde?</label>
-                                    <select class="form-control" id="hasHealthIssue" name="hasHealthIssue">
-                                        <option value="nao">Não</option>
-                                        <option value="sim">Sim</option>
+                                    <label for="hasHealthProblem">Possui problema de saúde?</label>
+                                    <select class="form-control" id="hasHealthProblem" th:field="*{hasHealthProblem}">
+                                        <option value="false">Não</option>
+                                        <option value="true">Sim</option>
                                     </select>
                                 </div>
 
-                                <!-- Qual problema -->
-                                <div class="form-group d-none" id="healthIssueGroup">
-                                    <label for="healthIssue">Qual problema de saúde?</label>
-                                    <input type="text" class="form-control" name="healthIssue" id="healthIssue"
-                                        placeholder="Descreva o problema de saúde">
+                                <div class="form-group d-none" id="healthProblemGroup">
+                                    <label for="healthProblem">Qual problema de saúde?</label>
+                                    <input type="text" class="form-control" th:field="*{healthProblem}" id="healthProblem" placeholder="Descreva o problema de saúde">
                                 </div>
 
-                                <!-- Contato de emergência -->
                                 <div class="form-group">
                                     <label for="emergencyContactName">Pessoa para emergência</label>
-                                    <input type="text" class="form-control" name="emergencyContactName"
-                                        id="emergencyContactName" placeholder="Nome da pessoa para emergência">
+                                    <input type="text" class="form-control" th:field="*{emergencyContactName}" id="emergencyContactName">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="emergencyContactPhone">Telefone da pessoa para emergência</label>
-                                    <input type="tel" class="form-control" name="emergencyContactPhone"
-                                        id="emergencyContactPhone" placeholder="Telefone de emergência" maxlength="14"
-                                        onkeypress="formatter('## # ####-####', this);">
+                                    <input type="tel" class="form-control" th:field="*{emergencyContactPhone}" id="emergencyContactPhone" maxlength="14"
+                                           onkeypress="formatter('## # ####-####', this);">
                                 </div>
                             </div>
-
 
                             <!-- Aba: Marketing -->
                             <div class="tab-pane fade" id="marketing" role="tabpanel">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="allowImageUse"
-                                        id="imageCheck">
+                                    <input class="form-check-input" type="checkbox" th:field="*{allowImageUse}" id="imageCheck">
                                     <label class="form-check-label" for="imageCheck">Permite uso da imagem?</label>
                                 </div>
                                 <div class="form-group mt-2">
                                     <label>Como ficou sabendo da empresa?</label>
-                                    <input class="form-control" type="text" name="referralSource">
+                                    <input class="form-control" type="text" th:field="*{referralSource}">
                                 </div>
                             </div>
                         </div>
 
-                        <input type="hidden" name="uuid">
-                        <button class="btn btn-primary mt-4" type="submit">Cadastrar</button>
+                        <input type="hidden" th:field="*{uuid}">
+                        <button class="btn btn-primary mt-4" type="submit" 
+                                th:text="*{uuid} != null ? 'Atualizar' : 'Cadastrar'">salvar</button>
                     </form>
-
                 </div>
             </div>
             <div class="col-lg-3 d-none d-lg-block bg-newStudent-image"></div>
@@ -236,23 +218,20 @@
     </div>
 </div>
 
-
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    function toggleField(selectId, groupId) {
-      const select = document.getElementById(selectId);
-      const group = document.getElementById(groupId);
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleField(selectId, groupId) {
+            const select = document.getElementById(selectId);
+            const group = document.getElementById(groupId);
+            function toggle() {
+                group.classList.toggle("d-none", select.value !== "true");
+            }
+            toggle();
+            select.addEventListener("change", toggle);
+        }
 
-      function toggle() {
-        group.classList.toggle("d-none", select.value !== "sim");
-      }
-
-      toggle(); // Executa na carga
-      select.addEventListener("change", toggle); // Executa na troca
-    }
-
-    toggleField("hasDeficiency", "deficiencyGroup");
-    toggleField("usesMedicine", "medicineGroup");
-    toggleField("hasHealthIssue", "healthIssueGroup");
-  });
+        toggleField("hasDisability", "deficiencyGroup");
+        toggleField("usesMedication", "medicineGroup");
+        toggleField("hasHealthProblem", "healthProblemGroup");
+    });
 </script>

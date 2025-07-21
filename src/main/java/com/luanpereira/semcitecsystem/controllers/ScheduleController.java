@@ -14,10 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import java.sql.Time;
 import java.time.DayOfWeek;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/schedule")
@@ -32,14 +35,11 @@ public class ScheduleController {
     @Autowired
     private ClassroomService classroomService;
 
-
     private static String USER_PROFILE_IMG_DIRECTORY;
 
     public ScheduleController(@Value("${userProfileImgDirectory}") String userProfileImgDirectory) {
         USER_PROFILE_IMG_DIRECTORY = userProfileImgDirectory;
     }
-
-    
 
     @GetMapping("/list")
     public String lisSchedule(Model model) {
@@ -54,7 +54,7 @@ public class ScheduleController {
     public String newSchedule(Model model) {
 
         List<UserModel> employeeList = userService.findAll();
-        List<Classroom> classList = classroomService.findAllOrderedByName(); 
+        List<Classroom> classList = classroomService.findAllOrderedByName();
 
         model.addAttribute("schedule", new Schedule());
         model.addAttribute("employeeList", employeeList);
@@ -67,29 +67,30 @@ public class ScheduleController {
 
     @GetMapping("/edit/{id}")
     public String editarSchedule(@PathVariable UUID id, Model model) {
-    Schedule schedule = scheduleService.findById(id).orElseThrow();
-    model.addAttribute("schedule", schedule);
-    model.addAttribute("classList", classroomService.findAllOrderedByName());
-    model.addAttribute("employeeList", userService.findAll());
-    model.addAttribute("weekDays", DayOfWeek.values());
-     model.addAttribute("contentTitle", "Editar Horário");
-    model.addAttribute("content", "newSchedule");
-    return "default";
-}
+        Schedule schedule = scheduleService.findById(id).orElseThrow();
+        model.addAttribute("schedule", schedule);
+        model.addAttribute("classList", classroomService.findAllOrderedByName());
+        model.addAttribute("employeeList", userService.findAll());
+        model.addAttribute("weekDays", DayOfWeek.values());
+        model.addAttribute("contentTitle", "Editar Horário");
+        model.addAttribute("content", "newSchedule");
+        return "default";
+    }
 
-     @PostMapping("/save")
+    @PostMapping("/save")
     public String saveStudent(RedirectAttributes redirectAttributes, Schedule schedule) {
-        String successMsg = schedule.getUuid() == null ? "Horário atribuido com sucesso" : "Horário editado com sucesso";
+        String successMsg = schedule.getUuid() == null ? "Horário atribuido com sucesso"
+                : "Horário editado com sucesso";
         try {
             this.scheduleService.save(schedule);
             redirectAttributes.addFlashAttribute("successMsg", successMsg);
-            return "redirect:/schedule/list" ;
-        
-        }    catch (Exception e) {
+            return "redirect:/schedule/list";
+
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMsg", "Algo deu errado");
         }
         return "redirect:/schedule/new";
     }
+    
 
- 
 }
